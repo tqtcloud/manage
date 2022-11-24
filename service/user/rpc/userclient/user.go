@@ -19,11 +19,14 @@ type (
 	RegisterResponse = user.RegisterResponse
 	UserInfoRequest  = user.UserInfoRequest
 	UserInfoResponse = user.UserInfoResponse
+	UserListRequest  = user.UserListRequest
+	UserListResponse = user.UserListResponse
 
 	User interface {
 		Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 		Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
+		UserList(ctx context.Context, in *UserListRequest, opts ...grpc.CallOption) (*UserListResponse, error)
 	}
 
 	defaultUser struct {
@@ -50,4 +53,9 @@ func (m *defaultUser) Register(ctx context.Context, in *RegisterRequest, opts ..
 func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error) {
 	client := user.NewUserClient(m.cli.Conn())
 	return client.UserInfo(ctx, in, opts...)
+}
+
+func (m *defaultUser) UserList(ctx context.Context, in *UserListRequest, opts ...grpc.CallOption) (*UserListResponse, error) {
+	client := user.NewUserClient(m.cli.Conn())
+	return client.UserList(ctx, in, opts...)
 }

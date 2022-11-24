@@ -38,3 +38,16 @@ type UserInfoResponse struct {
 	Mobile string `json:"mobile"`
 	Email  string `json:"email"`
 }
+
+type UserListRequest struct {
+	Page  int64 `json:"page"`
+	Limit int64 `json:"limit"`
+}
+
+type UserListResponse struct {
+	Id     int64  `json:"id"`
+	Name   string `json:"name"`
+	Gender int64  `json:"gender"`
+	Mobile string `json:"mobile"`
+	Email  string `json:"email"`
+}

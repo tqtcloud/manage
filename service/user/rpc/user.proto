@@ -52,8 +52,19 @@ message UserInfoResponse {
 }
 // 用户信息
 
+message UserListRequest {
+    int64 Page  =1;
+   int64 Limit  =2;
+}
+message UserListResponse {
+  repeated UserInfoResponse data = 1;
+}
+
+
 service User {
   rpc Login(LoginRequest) returns(LoginResponse);
   rpc Register(RegisterRequest) returns(RegisterResponse);
   rpc UserInfo(UserInfoRequest) returns(UserInfoResponse);
+  rpc UserList(UserListRequest) returns(UserListResponse);
+
 }

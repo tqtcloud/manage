@@ -47,6 +47,19 @@ type (
 		Mobile string `json:"mobile"`
 		Email  string `json:"email"`
 	}
+
+	UserListRequest {
+		Page  int64 `json:"page"`
+		Limit int64 `json:"limit"`
+	}
+	// 用户列表
+	UserListResponse {
+		Id     int64  `json:"id"`
+		Name   string `json:"name"`
+		Gender int64  `json:"gender"`
+		Mobile string `json:"mobile"`
+		Email  string `json:"email"`
+	}
 )
 
 service User {
@@ -61,5 +74,7 @@ service User {
 )
 service User {
 	@handler UserInfo
-	get /api/user/userinfo() returns (UserInfoResponse)
+	post /api/user/userinfo() returns (UserInfoResponse)
+	@handler UserList
+	post /api/user/userlist(UserListRequest) returns (UserListResponse)
 }
