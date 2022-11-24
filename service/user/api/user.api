@@ -1,0 +1,65 @@
+syntax = "v1"
+
+info(
+	title: "用户服务"
+	desc: "用户服务"
+	author: "type author here"
+	email: "type email here"
+	version: "v1"
+)
+
+type (
+	// 用户登录
+	LoginRequest {
+		Name     string `json:"name"`
+		Password string `json:"password"`
+	}
+	LoginResponse {
+		Name         string `json:"name"`
+		Gender       int64  `json:"gender"`
+		Mobile       string `json:"mobile"`
+		Email        string `json:"email"`
+		AccessToken  string `json:"accessToken"`
+		AccessExpire int64  `json:"accessExpire"`
+	}
+
+	// 用户注册
+	RegisterRequest {
+		Name     string `json:"name"`
+		Gender   int64  `json:"gender"`
+		Mobile   string `json:"mobile"`
+		Password string `json:"password"`
+		Email    string `json:"email"`
+	}
+	RegisterResponse {
+		Id     int64  `json:"id"`
+		Name   string `json:"name"`
+		Gender int64  `json:"gender"`
+		Mobile string `json:"mobile"`
+		Email  string `json:"email"`
+	}
+
+	// 用户信息
+	UserInfoResponse {
+		Id     int64  `json:"id"`
+		Name   string `json:"name"`
+		Gender int64  `json:"gender"`
+		Mobile string `json:"mobile"`
+		Email  string `json:"email"`
+	}
+)
+
+service User {
+	@handler Login
+	post /api/user/login(LoginRequest) returns  (LoginResponse)
+	@handler Register
+	post /api/user/register(RegisterRequest) returns (RegisterResponse)
+}
+
+@server(
+	jwt: Auth
+)
+service User {
+	@handler UserInfo
+	get /api/user/userinfo() returns (UserInfoResponse)
+}

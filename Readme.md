@@ -1,0 +1,15 @@
+
+
+redis 实现rpc认证
+```shell
+# 设置 hset key值
+ HSET rpc:auth:user userapi  6jKNZbEpYGeUMAifz10gOnmoty3TV
+ 
+ # 查询
+ HGET rpc:auth:user userapi
+```
+
+```shell
+goctl model mysql ddl -src ./model/user.sql -dir ./model -c
+goctl rpc protoc ./rpc/user.proto --go_out=./rpc/types --go-grpc_out=./rpc/types --zrpc_out=./rpc
+```
