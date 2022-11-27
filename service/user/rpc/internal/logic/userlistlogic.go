@@ -25,9 +25,6 @@ func NewUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserList
 }
 
 func (l *UserListLogic) UserList(in *user.UserListRequest) (*user.UserListResponse, error) {
-	// todo: add your logic here and delete this line
-
-	// 查询订单是否存在
 	list, err := l.svcCtx.UserModel.FindAllPage(l.ctx, in)
 	if err != nil {
 		if err == model.ErrNotFound {

@@ -27,7 +27,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterResponse, error) {
 	// todo: add your logic here and delete this line
-	// 判断手机号是否已经注册
+	// 判断Name是否已经注册
 	_, err := l.svcCtx.UserModel.FindOneByName(l.ctx, in.Name)
 	if err == nil {
 		return nil, errorx.NewUserError("用户已存在,请联系管理员")

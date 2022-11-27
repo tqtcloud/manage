@@ -26,8 +26,6 @@ func NewUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserList
 }
 
 func (l *UserListLogic) UserList(req *types.UserListRequest) (resp []*types.UserListResponse, err error) {
-	// todo: add your logic here and delete this line
-
 	res, err := l.svcCtx.UserRpc.UserList(l.ctx, &user.UserListRequest{
 		Page:  req.Page,
 		Limit: req.Limit,
