@@ -18,7 +18,7 @@ message CreateRequest {
   string TaskType = 3;
   int64 SecretId = 4;
   string Region = 5;
-
+  int64 UserId = 6;
 }
 message CreateResponse {
   int64 Id = 1;
@@ -70,9 +70,17 @@ message GetIdRequest {
   int64 Id = 1;
 }
 
+message CallbackRequest {
+  int64 taskId = 1;
+  int64  SecretId =2;
+}
+message CallbackResponse {
+}
+
 service Task {
   rpc TaskCreate(CreateRequest) returns(CreateResponse);
   rpc TaskDelete(DeleteRequest) returns(DeleteResponse);
   rpc TaskList(GetListRequest) returns(GetListResponse);
   rpc TaskGetId(GetIdRequest) returns(CreateResponse);
+  rpc TaskCallback(CallbackRequest) returns(CallbackResponse);
 }

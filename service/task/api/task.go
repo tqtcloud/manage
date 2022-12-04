@@ -13,7 +13,7 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 )
 
-var configFile = flag.String("f", "etc/secret.yaml", "the config file")
+var configFile = flag.String("f", "etc/task.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -23,9 +23,10 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
-	logx.DisableStat()
+
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
+	logx.DisableStat()
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

@@ -26,6 +26,7 @@ type TaskClient interface {
 	TaskDelete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	TaskList(ctx context.Context, in *GetListRequest, opts ...grpc.CallOption) (*GetListResponse, error)
 	TaskGetId(ctx context.Context, in *GetIdRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+	TaskCallback(ctx context.Context, in *CallbackRequest, opts ...grpc.CallOption) (*CallbackResponse, error)
 }
 
 type taskClient struct {
@@ -72,6 +73,15 @@ func (c *taskClient) TaskGetId(ctx context.Context, in *GetIdRequest, opts ...gr
 	return out, nil
 }
 
+func (c *taskClient) TaskCallback(ctx context.Context, in *CallbackRequest, opts ...grpc.CallOption) (*CallbackResponse, error) {
+	out := new(CallbackResponse)
+	err := c.cc.Invoke(ctx, "/task.Task/TaskCallback", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type TaskServer interface {
 	TaskDelete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	TaskList(context.Context, *GetListRequest) (*GetListResponse, error)
 	TaskGetId(context.Context, *GetIdRequest) (*CreateResponse, error)
+	TaskCallback(context.Context, *CallbackRequest) (*CallbackResponse, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedTaskServer) TaskList(context.Context, *GetListRequest) (*GetL
 }
 func (UnimplementedTaskServer) TaskGetId(context.Context, *GetIdRequest) (*CreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TaskGetId not implemented")
+}
+func (UnimplementedTaskServer) TaskCallback(context.Context, *CallbackRequest) (*CallbackResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TaskCallback not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -184,6 +198,24 @@ func _Task_TaskGetId_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_TaskCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CallbackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).TaskCallback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/task.Task/TaskCallback",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).TaskCallback(ctx, req.(*CallbackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TaskGetId",
 			Handler:    _Task_TaskGetId_Handler,
+		},
+		{
+			MethodName: "TaskCallback",
+			Handler:    _Task_TaskCallback_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

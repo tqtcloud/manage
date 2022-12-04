@@ -66,5 +66,4 @@ service User {
   rpc Register(RegisterRequest) returns(RegisterResponse);
   rpc UserInfo(UserInfoRequest) returns(UserInfoResponse);
   rpc UserList(UserListRequest) returns(UserListResponse);
-
 }

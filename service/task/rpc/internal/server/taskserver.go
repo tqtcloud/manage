@@ -41,3 +41,8 @@ func (s *TaskServer) TaskGetId(ctx context.Context, in *task.GetIdRequest) (*tas
 	l := logic.NewTaskGetIdLogic(ctx, s.svcCtx)
 	return l.TaskGetId(in)
 }
+
+func (s *TaskServer) TaskCallback(ctx context.Context, in *task.CallbackRequest) (*task.CallbackResponse, error) {
+	l := logic.NewTaskCallbackLogic(ctx, s.svcCtx)
+	return l.TaskCallback(in)
+}

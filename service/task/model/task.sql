@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `task` (
     `secret_desc` text NOT NULL COMMENT '凭证描述',
     `region` varchar(64) NOT NULL COMMENT '操作区域Region',
     `taskuser` varchar(64) NOT NULL COMMENT '发起同步的用户',
-    `status` varchar(1) NOT NULL COMMENT '任务当前状态',
+    `status` varchar(254) NOT NULL COMMENT '任务当前状态',
     `message` text NOT NULL COMMENT '任务失败相关信息',
     `start_at` bigint(20) NOT NULL COMMENT '任务开始时间',
     `end_at` bigint(20) NOT NULL COMMENT '任务结束时间',

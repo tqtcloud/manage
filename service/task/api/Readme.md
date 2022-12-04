@@ -17,7 +17,8 @@ type CreateRequest struct {
 	Vendor string `json:"vendor"`
 	TaskType string `json:"tasktype"`
 	SecretId int64 `json:"secret_id"`
-	Region string `json:"secret_desc"`
+	Region string `json:"vendor"`
+	UserId int64 `json:"userid"`
 }
 ```
 

@@ -31,19 +31,21 @@ func NewTaskCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TaskCr
 }
 
 func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateResponse, error) {
-	_, err := l.svcCtx.TaskModel.FindOneByTaskname(l.ctx, in.TaskName)
+	secretData, err := l.svcCtx.SecretRpc.SecretGetId(l.ctx, &secret.GetIdRequest{Id: in.SecretId})
+	if err != nil {
+		l.Logger.Errorf("task 查询 SecretGetId %s", err)
+		return nil, errorx.NewDefaultError("Secret 获取错误")
+	}
+	sk, _ := desencryption.Decrypt(secretData.AccessKeySecret, []byte(l.svcCtx.Config.Salt))
+	l.Infof("秘钥信息为：%s", sk)
+
+	userinfo, _ := l.svcCtx.UserRpc.UserInfo(l.ctx, &user.UserInfoRequest{Id: in.UserId})
+
+	_, err = l.svcCtx.TaskModel.FindOneByTaskname(l.ctx, in.TaskName)
 	if err == nil {
 		return nil, errorx.NewDefaultError("TaskName已存在,请重新输入")
 	}
-
-	secretData, err := l.svcCtx.SecretRpc.SecretGetId(l.ctx, &secret.GetIdRequest{Id: in.SecretId})
-	if err != nil {
-		return nil, err
-	}
-	userid := l.ctx.Value("uid")
-	userinfo, _ := l.svcCtx.UserRpc.UserInfo(l.ctx, &user.UserInfoRequest{Id: userid.(int64)})
-
-	_, _ = desencryption.Decrypt(secretData.AccessKeySecret, []byte(l.svcCtx.Config.Salt))
+	// 如果没有数据则创建任务
 	if err == model.ErrNotFound {
 		newTask := model.Task{
 			Taskname:     in.TaskName,
@@ -60,10 +62,10 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 			TotalSucceed: 0,
 			TotalFailed:  0,
 		}
+		l.Logger.Infof("待创建Task名称：%s,云厂商：%s, 秘钥ID: %s, 地域: %s,", newTask.Taskname, newTask.Vendor, newTask.SecretId, newTask.Region)
 
 		resp, err := l.svcCtx.TaskModel.Insert(l.ctx, &newTask)
 		if err != nil {
-			l.Logger.Infof("创建Task信息：%s", newTask)
 			l.Logger.Errorf("任务创建错误: %s", err)
 			return nil, errorx.NewUserError("任务创建错误,请联系管理员")
 		}
@@ -71,9 +73,23 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 		newTask.Id, err = resp.LastInsertId()
 		if err != nil {
 			l.Logger.Errorf("数据库递增错误: %s", err)
-			return nil, errorx.NewUserError("内部错误请联系,请联系管理员")
+			return nil, errorx.NewUserError("数据库递增错误,请联系管理员")
 		}
+
+		// 回调处理任务运行的状态同步等
+		callbackClient := NewTaskCallbackLogic(l.ctx, l.svcCtx)
+		go func() {
+			_, err := callbackClient.TaskCallback(&task.CallbackRequest{
+				TaskId:   newTask.Id,
+				SecretId: newTask.SecretId,
+			})
+			if err != nil {
+				l.Logger.Errorf("Task 回调出现错误请注意: %s", err)
+			}
+		}()
+
 		return &task.CreateResponse{
+			Id:       newTask.Id,
 			TaskName: newTask.Taskname,
 			Vendor:   newTask.Vendor,
 			TaskType: newTask.Tasktype,

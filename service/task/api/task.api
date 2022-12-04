@@ -15,7 +15,8 @@ type (
 		Vendor   string `json:"vendor"`
 		TaskType string `json:"tasktype"`
 		SecretId int64  `json:"secret_id"`
-		Region   string `json:"secret_desc"`
+		Region   string `json:"vendor"`
+		UserId   int64  `json:"userid"`
 	}
 
 	CreateResponse {
@@ -87,7 +88,7 @@ type (
 	group: task
 	prefix: /api/task/v1
 )
-service Secret {
+service Task {
 	@doc "创建任务"
 	@handler CreateTask
 	post /create(CreateRequest) returns (CreateResponse)
