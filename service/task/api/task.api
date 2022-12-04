@@ -1,0 +1,103 @@
+syntax = "v1"
+
+info(
+	title: "同步任务模块"
+	desc: "同步任务模块"
+	author: "type author here"
+	email: "type email here"
+	version: "v1"
+)
+
+type (
+	// 创建结构体
+	CreateRequest {
+		TaskName string `json:"taskname"`
+		Vendor   string `json:"vendor"`
+		TaskType string `json:"tasktype"`
+		SecretId int64  `json:"secret_id"`
+		Region   string `json:"secret_desc"`
+	}
+
+	CreateResponse {
+		Id         int64  `json:"id"`
+		TaskName   string `json:"taskname"`
+		Vendor     string `json:"vendor"`
+		TaskType   string `json:"tasktype"`
+		SecretId   int64  `json:"secret_id"`
+		Region     string `json:"secret_desc"`
+		TaskUser   string `json:"taskuser"`
+		Status     string `json:"status"`
+		Message    string `json:"message"`
+		Start_At   string `json:"start_at"`
+		CreateTime string `json:"create_time"`
+		UpdateTime string `json:"update_time"`
+	}
+	// 删除结构体
+	DeleteRequest {
+		Id int64 `path:"id"`
+	}
+	DeleteResponse {
+		Id           int64  `json:"id"`
+		TaskName     string `json:"taskname"`
+		Vendor       string `json:"vendor"`
+		TaskType     string `json:"tasktype"`
+		SecretId     int64  `json:"secret_id"`
+		Region       string `json:"secret_desc"`
+		TaskUser     string `json:"taskuser"`
+		Status       string `json:"status"`
+		Message      string `json:"message"`
+		Start_At     string `json:"start_at"`
+		End_At       string `json:"end_at"`
+		TotalSucceed int64  `json:"total_succeed"`
+		TotalFailed  int64  `json:"total_failed"`
+		CreateTime   string `json:"create_time"`
+		UpdateTime   string `json:"update_time"`
+	}
+	// 分页查询
+	GetListRequest {
+		Page  int64 `path:"page"`
+		Limit int64 `path:"limit"`
+	}
+
+	GetListResponse {
+		Id           int64  `json:"id"`
+		TaskName     string `json:"taskname"`
+		Vendor       string `json:"vendor"`
+		TaskType     string `json:"tasktype"`
+		SecretId     int64  `json:"secret_id"`
+		Region       string `json:"secret_desc"`
+		TaskUser     string `json:"taskuser"`
+		Status       string `json:"status"`
+		Message      string `json:"message"`
+		Start_At     string `json:"start_at"`
+		End_At       string `json:"end_at"`
+		TotalSucceed int64  `json:"total_succeed"`
+		TotalFailed  int64  `json:"total_failed"`
+		CreateTime   string `json:"create_time"`
+		UpdateTime   string `json:"update_time"`
+	}
+	// id查询
+	GetIdRequest {
+		Id int64 `path:"id"`
+	}
+)
+
+@server(
+	jwt: Auth
+	group: task
+	prefix: /api/task/v1
+)
+service Secret {
+	@doc "创建任务"
+	@handler CreateTask
+	post /create(CreateRequest) returns (CreateResponse)
+	@doc "删除任务"
+	@handler DeleteTask
+	delete /delete/:id(DeleteRequest) returns (DeleteResponse)
+	@doc "分页查询任务"
+	@handler GetListTask
+	get /:page/:limit (GetListRequest) returns (GetListResponse)
+	@doc "指定ID查询任务信息"
+	@handler GetIdTask
+	get /:id(GetIdRequest) returns (GetListResponse)
+}

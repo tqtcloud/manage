@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package task;
+option go_package="./task";
+
+enum Stage {
+  PENDDING = 0;
+  RUNNING = 1;
+  SUCCESS = 2;
+  FAILED = 3;
+  WARNING = 4;
+}
+
+// 创建结构体
+message CreateRequest {
+  string TaskName = 1;
+  string Vendor = 2;
+  string TaskType = 3;
+  int64 SecretId = 4;
+  string Region = 5;
+
+}
+message CreateResponse {
+  int64 Id = 1;
+  string TaskName = 2;
+  string Vendor = 3;
+  string TaskType = 4;
+  string SecretId = 5;
+  string Region = 6;
+  string TaskUser = 7;
+  string Status = 8;
+  string Message = 9;
+  string Start_At = 10;
+}
+
+// 删除结构体
+message DeleteRequest {
+  int64 Id = 1;
+}
+message DeleteResponse {
+  int64 Id = 1;
+  string TaskName = 2;
+  string Vendor = 3;
+  string TaskType = 4;
+  string SecretId = 5;
+  string Region = 6;
+  string TaskUser = 7;
+  string Status = 8;
+  string Message = 9;
+  string Start_At = 10;
+  string CreateTime = 11;
+  string UpdateTime = 12;
+  int64 TotalSucceed = 13;
+  int64 TotalFailed = 14;
+
+}
+
+
+// 分页查询
+message GetListRequest {
+  int64 Page  =1;
+  int64 Limit  =2;
+}
+message GetListResponse {
+  repeated DeleteResponse data = 1;
+}
+
+// ID查询
+message GetIdRequest {
+  int64 Id = 1;
+}
+
+service Task {
+  rpc TaskCreate(CreateRequest) returns(CreateResponse);
+  rpc TaskDelete(DeleteRequest) returns(DeleteResponse);
+  rpc TaskList(GetListRequest) returns(GetListResponse);
+  rpc TaskGetId(GetIdRequest) returns(CreateResponse);
+}

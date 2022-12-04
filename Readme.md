@@ -11,6 +11,7 @@ redis 实现rpc认证
 
 ```shell
 goctl model mysql ddl -src ./model/user.sql -dir ./model -c
+goctl  api go -api user.api -dir . 
 goctl rpc protoc ./rpc/user.proto --go_out=./rpc/types --go-grpc_out=./rpc/types --zrpc_out=./rpc
 ```
 
