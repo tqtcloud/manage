@@ -30,3 +30,9 @@ export ENDPOINTS=192.168.0.102:2379
 etcdctl --endpoints=$ENDPOINTS member list
 etcdctl --endpoints=$ENDPOINTS get --prefix ""
 ```
+```shell
+如果你添加.gitignore的时候，git里面已经上传了很多不需要的文件，则使用下面两个命令干掉他们
+如果是文件夹：git rm -r --cached 文件夹名
+如果是文件：git rm --cached 文件名
+方法参考自：https://stackoverflow.com/questions/9550437/how-to-make-git-ignore-idea-files-created-by-rubymine
+```
