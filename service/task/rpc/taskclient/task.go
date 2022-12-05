@@ -27,7 +27,7 @@ type (
 		TaskCreate(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 		TaskDelete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 		TaskList(ctx context.Context, in *GetListRequest, opts ...grpc.CallOption) (*GetListResponse, error)
-		TaskGetId(ctx context.Context, in *GetIdRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+		TaskGetId(ctx context.Context, in *GetIdRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 		TaskCallback(ctx context.Context, in *CallbackRequest, opts ...grpc.CallOption) (*CallbackResponse, error)
 	}
 
@@ -57,7 +57,7 @@ func (m *defaultTask) TaskList(ctx context.Context, in *GetListRequest, opts ...
 	return client.TaskList(ctx, in, opts...)
 }
 
-func (m *defaultTask) TaskGetId(ctx context.Context, in *GetIdRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
+func (m *defaultTask) TaskGetId(ctx context.Context, in *GetIdRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	client := task.NewTaskClient(m.cli.Conn())
 	return client.TaskGetId(ctx, in, opts...)
 }

@@ -81,6 +81,6 @@ service Task {
   rpc TaskCreate(CreateRequest) returns(CreateResponse);
   rpc TaskDelete(DeleteRequest) returns(DeleteResponse);
   rpc TaskList(GetListRequest) returns(GetListResponse);
-  rpc TaskGetId(GetIdRequest) returns(CreateResponse);
+  rpc TaskGetId(GetIdRequest) returns(DeleteResponse);
   rpc TaskCallback(CallbackRequest) returns(CallbackResponse);
 }

@@ -2,6 +2,9 @@ package task
 
 import (
 	"context"
+	"github.com/tqtcloud/manage/service/task/rpc/types/task"
+	"github.com/tqtcloud/resp/errorx"
+	"strconv"
 
 	"github.com/tqtcloud/manage/service/task/api/internal/svc"
 	"github.com/tqtcloud/manage/service/task/api/internal/types"
@@ -24,7 +27,31 @@ func NewGetIdTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetIdTa
 }
 
 func (l *GetIdTaskLogic) GetIdTask(req *types.GetIdRequest) (resp *types.GetListResponse, err error) {
-	// todo: add your logic here and delete this line
+	res, err := l.svcCtx.TaskRpc.TaskGetId(l.ctx, &task.GetIdRequest{Id: req.Id})
+	if err != nil {
+		l.Logger.Errorf("TaskGetId 查询错误 %s ", err)
+		return nil, errorx.NewDefaultError("TaskGetId 查询错误")
+	}
 
-	return
+	secretId, err := strconv.ParseInt(res.SecretId, 10, 64)
+	if err != nil {
+		return nil, errorx.NewCodeError(1010, "int64 类型转换错误")
+	}
+
+	return &types.GetListResponse{
+		Id:           res.Id,
+		TaskName:     res.TaskName,
+		Vendor:       res.Vendor,
+		TaskType:     res.TaskType,
+		SecretId:     secretId,
+		Region:       res.Region,
+		TaskUser:     res.TaskUser,
+		Status:       res.Status,
+		Message:      res.Message,
+		Start_At:     res.Start_At,
+		TotalSucceed: res.TotalSucceed,
+		TotalFailed:  res.TotalFailed,
+		CreateTime:   res.CreateTime,
+		UpdateTime:   res.UpdateTime,
+	}, nil
 }

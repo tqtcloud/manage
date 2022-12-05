@@ -2,9 +2,11 @@ package task
 
 import (
 	"context"
-
 	"github.com/tqtcloud/manage/service/task/api/internal/svc"
 	"github.com/tqtcloud/manage/service/task/api/internal/types"
+	"github.com/tqtcloud/manage/service/task/rpc/types/task"
+	"github.com/tqtcloud/resp/errorx"
+	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,7 +26,30 @@ func NewDeleteTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 }
 
 func (l *DeleteTaskLogic) DeleteTask(req *types.DeleteRequest) (resp *types.DeleteResponse, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	res, err := l.svcCtx.TaskRpc.TaskDelete(l.ctx, &task.DeleteRequest{
+		Id: req.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
+	secretId, err := strconv.ParseInt(res.SecretId, 10, 64)
+	if err != nil {
+		return nil, errorx.NewCodeError(1010, "int64 类型转换错误")
+	}
+	return &types.DeleteResponse{
+		Id:           res.Id,
+		TaskName:     res.TaskName,
+		Vendor:       res.Vendor,
+		TaskType:     res.TaskType,
+		SecretId:     secretId,
+		Region:       res.Region,
+		TaskUser:     res.TaskUser,
+		Status:       res.Status,
+		Message:      res.Message,
+		Start_At:     res.Start_At,
+		TotalSucceed: res.TotalSucceed,
+		TotalFailed:  res.TotalFailed,
+		CreateTime:   res.CreateTime,
+		UpdateTime:   res.UpdateTime,
+	}, nil
 }

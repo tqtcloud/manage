@@ -25,7 +25,7 @@ type TaskClient interface {
 	TaskCreate(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 	TaskDelete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	TaskList(ctx context.Context, in *GetListRequest, opts ...grpc.CallOption) (*GetListResponse, error)
-	TaskGetId(ctx context.Context, in *GetIdRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+	TaskGetId(ctx context.Context, in *GetIdRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	TaskCallback(ctx context.Context, in *CallbackRequest, opts ...grpc.CallOption) (*CallbackResponse, error)
 }
 
@@ -64,8 +64,8 @@ func (c *taskClient) TaskList(ctx context.Context, in *GetListRequest, opts ...g
 	return out, nil
 }
 
-func (c *taskClient) TaskGetId(ctx context.Context, in *GetIdRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
-	out := new(CreateResponse)
+func (c *taskClient) TaskGetId(ctx context.Context, in *GetIdRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+	out := new(DeleteResponse)
 	err := c.cc.Invoke(ctx, "/task.Task/TaskGetId", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ type TaskServer interface {
 	TaskCreate(context.Context, *CreateRequest) (*CreateResponse, error)
 	TaskDelete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	TaskList(context.Context, *GetListRequest) (*GetListResponse, error)
-	TaskGetId(context.Context, *GetIdRequest) (*CreateResponse, error)
+	TaskGetId(context.Context, *GetIdRequest) (*DeleteResponse, error)
 	TaskCallback(context.Context, *CallbackRequest) (*CallbackResponse, error)
 	mustEmbedUnimplementedTaskServer()
 }
@@ -107,7 +107,7 @@ func (UnimplementedTaskServer) TaskDelete(context.Context, *DeleteRequest) (*Del
 func (UnimplementedTaskServer) TaskList(context.Context, *GetListRequest) (*GetListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TaskList not implemented")
 }
-func (UnimplementedTaskServer) TaskGetId(context.Context, *GetIdRequest) (*CreateResponse, error) {
+func (UnimplementedTaskServer) TaskGetId(context.Context, *GetIdRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TaskGetId not implemented")
 }
 func (UnimplementedTaskServer) TaskCallback(context.Context, *CallbackRequest) (*CallbackResponse, error) {

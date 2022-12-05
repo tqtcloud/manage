@@ -37,7 +37,7 @@ func (s *TaskServer) TaskList(ctx context.Context, in *task.GetListRequest) (*ta
 	return l.TaskList(in)
 }
 
-func (s *TaskServer) TaskGetId(ctx context.Context, in *task.GetIdRequest) (*task.CreateResponse, error) {
+func (s *TaskServer) TaskGetId(ctx context.Context, in *task.GetIdRequest) (*task.DeleteResponse, error) {
 	l := logic.NewTaskGetIdLogic(ctx, s.svcCtx)
 	return l.TaskGetId(in)
 }
