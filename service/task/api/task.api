@@ -56,8 +56,8 @@ type (
 	}
 	// 分页查询
 	GetListRequest {
-		Page  int64 `path:"page"`
-		Limit int64 `path:"limit"`
+		Page  int64 `form:"page"`
+		Limit int64 `form:"limit"`
 	}
 
 	GetListResponse {
@@ -97,7 +97,7 @@ service Task {
 	delete /delete/:id(DeleteRequest) returns (DeleteResponse)
 	@doc "分页查询任务"
 	@handler GetListTask
-	get /:page/:limit (GetListRequest) returns (GetListResponse)
+	get / (GetListRequest) returns (GetListResponse)
 	@doc "指定ID查询任务信息"
 	@handler GetIdTask
 	get /:id(GetIdRequest) returns (GetListResponse)

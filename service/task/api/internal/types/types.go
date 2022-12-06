@@ -48,8 +48,8 @@ type DeleteResponse struct {
 }
 
 type GetListRequest struct {
-	Page  int64 `path:"page"`
-	Limit int64 `path:"limit"`
+	Page  int64 `form:"page"`
+	Limit int64 `form:"limit"`
 }
 
 type GetListResponse struct {
