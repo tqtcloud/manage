@@ -1,6 +1,8 @@
 package svc
 
 import (
+	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/hostclient"
+	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/types/host"
 	"github.com/tqtcloud/manage/service/secret/rpc/secretclient"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
 	"github.com/tqtcloud/manage/service/task/model"
@@ -16,6 +18,7 @@ type ServiceContext struct {
 	TaskModel model.TaskModel
 	SecretRpc secret.SecretClient
 	UserRpc   user.UserClient
+	HostRpc host.HostClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -25,5 +28,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TaskModel: model.NewTaskModel(conn, c.CacheRedis),
 		SecretRpc: secretclient.NewSecret(zrpc.MustNewClient(c.SecretRpc)),
 		UserRpc:   userclient.NewUser(zrpc.MustNewClient(c.UserRpc)),
+		HostRpc: hostclient.NewHost(zrpc.MustNewClient(c.HostRpc)),
 	}
 }

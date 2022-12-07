@@ -47,8 +47,8 @@ func (l *TaskDeleteLogic) TaskDelete(in *task.DeleteRequest) (*task.DeleteRespon
 	return &task.DeleteResponse{
 		Id:           resp.Id,
 		TaskName:     resp.Taskname,
-		Vendor:       resp.Vendor,
-		TaskType:     resp.Tasktype,
+		Vendor: task.Vendor(task.Stage_value[resp.Vendor]),
+		TaskType:     task.TaskType(task.TaskType_value[resp.Tasktype]),
 		SecretId:     strconv.FormatInt(resp.SecretId, 10),
 		Region:       resp.Region,
 		TaskUser:     resp.Taskuser,

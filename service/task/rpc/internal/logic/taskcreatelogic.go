@@ -49,8 +49,8 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 	if err == model.ErrNotFound {
 		newTask := model.Task{
 			Taskname:     in.TaskName,
-			Vendor:       in.Vendor,
-			Tasktype:     in.TaskType,
+			Vendor:       in.Vendor.String(),
+			Tasktype:     in.TaskType.String(),
 			SecretId:     in.SecretId,
 			SecretDesc:   secretData.Vendor,
 			Region:       in.Region,
@@ -82,6 +82,9 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 			_, err := callbackClient.TaskCallback(&task.CallbackRequest{
 				TaskId:   newTask.Id,
 				SecretId: newTask.SecretId,
+				Vendor: in.Vendor,
+				Region: newTask.Region,
+				TaskType: in.TaskType,
 			})
 			if err != nil {
 				l.Logger.Errorf("Task 回调出现错误请注意: %s", err)
@@ -91,8 +94,8 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 		return &task.CreateResponse{
 			Id:       newTask.Id,
 			TaskName: newTask.Taskname,
-			Vendor:   newTask.Vendor,
-			TaskType: newTask.Tasktype,
+			Vendor:   in.Vendor,
+			TaskType: in.TaskType,
 			SecretId: strconv.FormatInt(newTask.SecretId, 10),
 			Region:   newTask.Region,
 			TaskUser: userinfo.Name,

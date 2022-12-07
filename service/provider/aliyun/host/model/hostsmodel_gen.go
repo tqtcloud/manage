@@ -18,8 +18,8 @@ import (
 var (
 	hostsFieldNames          = builder.RawFieldNames(&Hosts{})
 	hostsRows                = strings.Join(hostsFieldNames, ",")
-	hostsRowsExpectAutoSet   = strings.Join(stringx.Remove(hostsFieldNames, "`updated_at`", "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`"), ",")
-	hostsRowsWithPlaceHolder = strings.Join(stringx.Remove(hostsFieldNames, "`instance_id`", "`updated_at`", "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`"), "=?,") + "=?"
+	hostsRowsExpectAutoSet   = strings.Join(stringx.Remove(hostsFieldNames, "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`", "`updated_at`"), ",")
+	hostsRowsWithPlaceHolder = strings.Join(stringx.Remove(hostsFieldNames, "`instance_id`", "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`", "`updated_at`"), "=?,") + "=?"
 
 	cacheHostsInstanceIdPrefix = "cache:hosts:instanceId:"
 )
@@ -38,27 +38,27 @@ type (
 	}
 
 	Hosts struct {
-		InstanceId              string         `db:"instance_id"`                // 实例Id
-		Regionid                string         `db:"regionid"`                   // 实例所属地域ID
-		InstanceName            string         `db:"instance_name"`              // 实例名称
-		ExpiredTime             string         `db:"expired_time"`               // 过期时间
-		CreationTime            string         `db:"creation_time"`              // 实例创建时间
-		KeyPairName             sql.NullString `db:"keyPair_name"`               // 密钥对名称
-		Description             sql.NullString `db:"description"`                // 实例描述
-		OsName                  string         `db:"os_name"`                    // 操作系统名称
-		ImageId                 string         `db:"image_id"`                   // 镜像Id
-		GpuAmount               sql.NullInt64  `db:"gpu_amount"`                 // gpu核数
-		Cpu                     int64          `db:"cpu"`                        // cpu核数
-		Memory                  int64          `db:"memory"`                     // 内存大小
-		OsType                  string         `db:"os_type"`                    // 操作系统类型
-		InstanceType            string         `db:"instance_type"`              // 实例规格
-		InstanceChargeType      string         `db:"instance_charge_type"`       // 实例的计费方式
-		InternetMaxBandwidthOut int64          `db:"internet_max_bandwidth_out"` // 外网最大出口带宽
-		InternetMaxBandwidthIn  int64          `db:"internet_max_bandwidth_in"`  // 外网最大入口带宽
-		Primaryip               string         `db:"primaryip"`                  // 弹性网卡主私有IP地址
-		Publicip                sql.NullString `db:"publicip"`                   // 实例的公网IP列表
-		EipDddresses            sql.NullString `db:"eip_dddresses"`              // 实例的弹性公网IP列表
-		SecurityGroupId         sql.NullString `db:"security_group_id"`          // 实例所属安全组Id列表
+		InstanceId              string `db:"instance_id"`                // 实例Id
+		Regionid                string `db:"regionid"`                   // 实例所属地域ID
+		InstanceName            string `db:"instance_name"`              // 实例名称
+		ExpiredTime             string `db:"expired_time"`               // 过期时间
+		CreationTime            string `db:"creation_time"`              // 实例创建时间
+		KeyPairName             string `db:"keyPair_name"`               // 密钥对名称
+		Description             string `db:"description"`                // 实例描述
+		OsName                  string `db:"os_name"`                    // 操作系统名称
+		ImageId                 string `db:"image_id"`                   // 镜像Id
+		GpuAmount               int64  `db:"gpu_amount"`                 // gpu核数
+		Cpu                     int64  `db:"cpu"`                        // cpu核数
+		Memory                  int64  `db:"memory"`                     // 内存大小
+		OsType                  string `db:"os_type"`                    // 操作系统类型
+		InstanceType            string `db:"instance_type"`              // 实例规格
+		InstanceChargeType      string `db:"instance_charge_type"`       // 实例的计费方式
+		InternetMaxBandwidthOut int64  `db:"internet_max_bandwidth_out"` // 外网最大出口带宽
+		InternetMaxBandwidthIn  int64  `db:"internet_max_bandwidth_in"`  // 外网最大入口带宽
+		Primaryip               string `db:"primaryip"`                  // 弹性网卡主私有IP地址
+		Publicip                string `db:"publicip"`                   // 实例的公网IP列表
+		EipAddresses            string `db:"eip_addresses"`              // 实例的弹性公网IP列表
+		SecurityGroupId         string `db:"security_group_id"`          // 实例所属安全组Id列表
 	}
 )
 
@@ -99,7 +99,7 @@ func (m *defaultHostsModel) Insert(ctx context.Context, data *Hosts) (sql.Result
 	hostsInstanceIdKey := fmt.Sprintf("%s%v", cacheHostsInstanceIdPrefix, data.InstanceId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, hostsRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.InstanceId, data.Regionid, data.InstanceName, data.ExpiredTime, data.CreationTime, data.KeyPairName, data.Description, data.OsName, data.ImageId, data.GpuAmount, data.Cpu, data.Memory, data.OsType, data.InstanceType, data.InstanceChargeType, data.InternetMaxBandwidthOut, data.InternetMaxBandwidthIn, data.Primaryip, data.Publicip, data.EipDddresses, data.SecurityGroupId)
+		return conn.ExecCtx(ctx, query, data.InstanceId, data.Regionid, data.InstanceName, data.ExpiredTime, data.CreationTime, data.KeyPairName, data.Description, data.OsName, data.ImageId, data.GpuAmount, data.Cpu, data.Memory, data.OsType, data.InstanceType, data.InstanceChargeType, data.InternetMaxBandwidthOut, data.InternetMaxBandwidthIn, data.Primaryip, data.Publicip, data.EipAddresses, data.SecurityGroupId)
 	}, hostsInstanceIdKey)
 	return ret, err
 }
@@ -108,7 +108,7 @@ func (m *defaultHostsModel) Update(ctx context.Context, data *Hosts) error {
 	hostsInstanceIdKey := fmt.Sprintf("%s%v", cacheHostsInstanceIdPrefix, data.InstanceId)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `instance_id` = ?", m.table, hostsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.Regionid, data.InstanceName, data.ExpiredTime, data.CreationTime, data.KeyPairName, data.Description, data.OsName, data.ImageId, data.GpuAmount, data.Cpu, data.Memory, data.OsType, data.InstanceType, data.InstanceChargeType, data.InternetMaxBandwidthOut, data.InternetMaxBandwidthIn, data.Primaryip, data.Publicip, data.EipDddresses, data.SecurityGroupId, data.InstanceId)
+		return conn.ExecCtx(ctx, query, data.Regionid, data.InstanceName, data.ExpiredTime, data.CreationTime, data.KeyPairName, data.Description, data.OsName, data.ImageId, data.GpuAmount, data.Cpu, data.Memory, data.OsType, data.InstanceType, data.InstanceChargeType, data.InternetMaxBandwidthOut, data.InternetMaxBandwidthIn, data.Primaryip, data.Publicip, data.EipAddresses, data.SecurityGroupId, data.InstanceId)
 	}, hostsInstanceIdKey)
 	return err
 }
