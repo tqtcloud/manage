@@ -112,6 +112,7 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 					SecurityGroupId:         newInstanceHost.SecurityGroupId,
 				})
 				totalSucceed++
+				continue
 			}
 			if tea.StringValue(v.InstanceId) == sqData.InstanceId {
 				newInstanceHost := model.Hosts{
@@ -170,7 +171,7 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 				totalSucceed++
 			}
 		}
-		l.Info("本次同步ECS数据共计 %s条：", len(ines))
+		l.Infof("本次同步ECS数据共计 %d 条：", len(ines))
 	}
 
 	return &host.GetListResponse{

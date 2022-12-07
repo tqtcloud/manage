@@ -27,8 +27,8 @@ func NewCreateTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 func (l *CreateTaskLogic) CreateTask(req *types.CreateRequest) (resp *types.CreateResponse, err error) {
 	res, err := l.svcCtx.TaskRpc.TaskCreate(l.ctx, &task.CreateRequest{
 		TaskName: req.TaskName,
-		Vendor:   req.Vendor,
-		TaskType: req.TaskType,
+		Vendor:   task.Vendor(req.Vendor),
+		TaskType: task.TaskType(req.TaskType),
 		Region:   req.Region,
 		SecretId: req.SecretId,
 		UserId:   req.UserId,
@@ -40,8 +40,8 @@ func (l *CreateTaskLogic) CreateTask(req *types.CreateRequest) (resp *types.Crea
 	return &types.CreateResponse{
 		Id:       res.Id,
 		TaskName: res.TaskName,
-		Vendor:   res.Vendor,
-		TaskType: res.TaskType,
+		Vendor:   string(res.Vendor),
+		TaskType: string(res.TaskType),
 		SecretId: req.SecretId,
 		Region:   res.Region,
 		TaskUser: res.TaskUser,

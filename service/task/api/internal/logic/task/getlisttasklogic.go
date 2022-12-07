@@ -46,8 +46,8 @@ func (l *GetListTaskLogic) GetListTask(req *types.GetListRequest) (resp []*types
 		taskList = append(taskList, &types.GetListResponse{
 			Id:           item.Id,
 			TaskName:     item.TaskName,
-			Vendor:       item.Vendor,
-			TaskType:     item.TaskType,
+			Vendor:       string(item.Vendor),
+			TaskType:     string(item.TaskType),
 			SecretId:     secretId,
 			Region:       item.Region,
 			TaskUser:     item.TaskUser,

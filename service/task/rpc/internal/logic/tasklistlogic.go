@@ -40,8 +40,8 @@ func (l *TaskListLogic) TaskList(in *task.GetListRequest) (*task.GetListResponse
 		taskList = append(taskList, &task.DeleteResponse{
 			Id:           item.Id,
 			TaskName:     item.Taskname,
-			Vendor:       task.Vendor(task.Stage_value[item.Vendor]),
-			TaskType:     task.TaskType(task.TaskType_value[item.Tasktype]),
+			Vendor:       item.Vendor,
+			TaskType:     item.Tasktype,
 			SecretId:     strconv.FormatInt(item.SecretId, 10),
 			Region:       item.Region,
 			TaskUser:     item.Taskuser,

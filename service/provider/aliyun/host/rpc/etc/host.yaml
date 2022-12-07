@@ -2,7 +2,7 @@ Name: host.rpc
 ListenOn: 0.0.0.0:9004
 Etcd:
   Hosts:
-  - 192.168.0.102:6379
+  - 192.168.0.102:2379
   Key: host.rpc
 
 Auth: true               # 是否开启 Auth 验证

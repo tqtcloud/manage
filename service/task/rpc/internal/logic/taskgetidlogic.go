@@ -35,11 +35,12 @@ func (l *TaskGetIdLogic) TaskGetId(in *task.GetIdRequest) (*task.DeleteResponse,
 		return nil, errorx.NewCodeError(1011, err.Error())
 	}
 
+	l.Infof("厂商：%s, 类型：%s", resp.Vendor, resp.Tasktype)
 	return &task.DeleteResponse{
 		Id:           resp.Id,
 		TaskName:     resp.Taskname,
-		Vendor:       task.Vendor(task.Stage_value[resp.Vendor]),
-		TaskType:     task.TaskType(task.TaskType_value[resp.Tasktype]),
+		Vendor:       resp.Vendor,
+		TaskType:     resp.Tasktype,
 		SecretId:     strconv.FormatInt(resp.SecretId, 10),
 		Region:       resp.Region,
 		TaskUser:     resp.Taskuser,

@@ -32,8 +32,8 @@ message CreateRequest {
 message CreateResponse {
   int64 Id = 1;
   string TaskName = 2;
-  Vendor Vendor = 3;
-  TaskType TaskType = 4;
+  string Vendor = 3;
+  string TaskType = 4;
   string SecretId = 5;
   string Region = 6;
   string TaskUser = 7;
@@ -49,8 +49,8 @@ message DeleteRequest {
 message DeleteResponse {
   int64 Id = 1;
   string TaskName = 2;
-  Vendor Vendor = 3;
-  TaskType TaskType = 4;
+  string Vendor = 3;
+  string TaskType = 4;
   string SecretId = 5;
   string Region = 6;
   string TaskUser = 7;

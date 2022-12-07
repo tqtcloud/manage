@@ -7,6 +7,7 @@ import (
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/internal/server"
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/types/host"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -32,7 +33,7 @@ func main() {
 		}
 	})
 	defer s.Stop()
-
+	logx.DisableStat()
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }

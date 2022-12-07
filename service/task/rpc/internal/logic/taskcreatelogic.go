@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/common/desencryption"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
 	"github.com/tqtcloud/manage/service/task/model"
 	"github.com/tqtcloud/manage/service/user/rpc/types/user"
@@ -36,8 +35,8 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 		l.Logger.Errorf("task 查询 SecretGetId %s", err)
 		return nil, errorx.NewDefaultError("Secret 获取错误")
 	}
-	sk, _ := desencryption.Decrypt(secretData.AccessKeySecret, []byte(l.svcCtx.Config.Salt))
-	l.Infof("秘钥信息为：%s", sk)
+	//sk, _ := desencryption.Decrypt(secretData.AccessKeySecret, []byte(l.svcCtx.Config.Salt))
+	//l.Infof("秘钥信息为：%s", sk)
 
 	userinfo, _ := l.svcCtx.UserRpc.UserInfo(l.ctx, &user.UserInfoRequest{Id: in.UserId})
 
@@ -77,13 +76,27 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 		}
 
 		// 回调处理任务运行的状态同步等
-		callbackClient := NewTaskCallbackLogic(l.ctx, l.svcCtx)
+		//callbackClient := taskclient.NewTask(zrpc.MustNewClient(zrpc.RpcClientConf{
+		//	Etcd: discov.EtcdConf{
+		//		Hosts: []string{"192.168.0.102:2379"},
+		//		Key:   "task.rpc",
+		//	},
+		//	App:   "taskapi",
+		//	Token: "6jKNZbEpYGeUMAifz10gOnmoty3TV",
+		//}))
+
+		callbackClient := NewTaskCallbackLogic(context.TODO(), l.svcCtx)
 		go func() {
+			defer func() {
+				if err := recover(); err != nil {
+					l.Errorf("panic error:%", err)
+				}
+			}()
 			_, err := callbackClient.TaskCallback(&task.CallbackRequest{
 				TaskId:   newTask.Id,
 				SecretId: newTask.SecretId,
-				Vendor: in.Vendor,
-				Region: newTask.Region,
+				Vendor:   in.Vendor,
+				Region:   newTask.Region,
 				TaskType: in.TaskType,
 			})
 			if err != nil {
@@ -94,8 +107,8 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 		return &task.CreateResponse{
 			Id:       newTask.Id,
 			TaskName: newTask.Taskname,
-			Vendor:   in.Vendor,
-			TaskType: in.TaskType,
+			Vendor:   in.Vendor.String(),
+			TaskType: in.TaskType.String(),
 			SecretId: strconv.FormatInt(newTask.SecretId, 10),
 			Region:   newTask.Region,
 			TaskUser: userinfo.Name,

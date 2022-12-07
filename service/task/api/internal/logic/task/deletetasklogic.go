@@ -39,8 +39,8 @@ func (l *DeleteTaskLogic) DeleteTask(req *types.DeleteRequest) (resp *types.Dele
 	return &types.DeleteResponse{
 		Id:           res.Id,
 		TaskName:     res.TaskName,
-		Vendor:       res.Vendor,
-		TaskType:     res.TaskType,
+		Vendor:       string(res.Vendor),
+		TaskType:     string(res.TaskType),
 		SecretId:     secretId,
 		Region:       res.Region,
 		TaskUser:     res.TaskUser,

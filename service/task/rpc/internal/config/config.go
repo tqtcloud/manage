@@ -14,5 +14,5 @@ type Config struct {
 	Salt       string
 	SecretRpc  zrpc.RpcClientConf
 	UserRpc    zrpc.RpcClientConf
-	HostRpc zrpc.RpcClientConf
+	HostRpc    zrpc.RpcClientConf
 }

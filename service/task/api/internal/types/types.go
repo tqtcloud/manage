@@ -3,10 +3,10 @@ package types
 
 type CreateRequest struct {
 	TaskName string `json:"taskname"`
-	Vendor   string `json:"vendor"`
-	TaskType string `json:"tasktype"`
+	Vendor   int64  `json:"vendor"`
+	TaskType int64  `json:"tasktype"`
 	SecretId int64  `json:"secret_id"`
-	Region   string `json:"vendor"`
+	Region   string `json:"region"`
 	UserId   int64  `json:"userid"`
 }
 
