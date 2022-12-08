@@ -43,7 +43,7 @@ func (l *TaskCallbackLogic) TaskCallback(in *task.CallbackRequest) (*task.Callba
 			//l.Infof("秘钥信息为：%s", sk)
 
 			start := time.Now()
-			_, err = l.svcCtx.HostRpc.HostSync(l.ctx, &host.CreateRequest{
+			_, err = l.svcCtx.HostRpc.HostSync(context.Background(), &host.CreateRequest{
 				AccessKeyId:     secretData.AccessKeyId,
 				AccessKeySecret: sk,
 				Vendor:          in.Vendor.String(),

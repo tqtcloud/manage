@@ -10,6 +10,7 @@ import (
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/types/host"
 	"github.com/tqtcloud/resp/errorx"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -40,7 +41,7 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 	ines := make([]ecs.DescribeInstancesResponseBodyInstancesInstance, 0)
 	pag.SetTotalCount(ecsClient)
 	for pag.CheckHasNext() {
-		l.Infof("第 %d 页数据 ", pag.PageNumber)
+		l.Infof("第 %d 页数据 ,总共数据 %d 条", pag.PageNumber, pag.TotalCount)
 		set, err := pag.HostsReq(ecsClient)
 		if err != nil {
 			return nil, errorx.NewDefaultError("阿里云：分页主机错误")
@@ -81,7 +82,8 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 					SecurityGroupId:         v.SecurityGroupIds.String(),
 				}
 				l.Logger.Infof("实例id为：%s 实例名：%s, 地域: %s,", newInstanceHost.InstanceId, newInstanceHost.InstanceName, newInstanceHost.Regionid)
-				_, err := l.svcCtx.HostsModel.Insert(l.ctx, &newInstanceHost)
+				_, err := l.svcCtx.HostsModel.Insert(context.Background(), &newInstanceHost)
+				time.Sleep(30 * time.Millisecond)
 				if err != nil {
 					l.Logger.Errorf("实例创建错误: %s", err)
 					totalFailed++
@@ -139,7 +141,9 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 				}
 				l.Logger.Infof("实例id为：%s 实例名：%s, 地域: %s,", newInstanceHost.InstanceId, newInstanceHost.InstanceName, newInstanceHost.Regionid)
 
-				err := l.svcCtx.HostsModel.Update(l.ctx, &newInstanceHost)
+				err := l.svcCtx.HostsModel.Update(context.Background(), &newInstanceHost)
+				time.Sleep(30 * time.Millisecond)
+
 				if err != nil {
 					l.Logger.Errorf("实例同步更新错误: %s", err)
 					totalFailed++
