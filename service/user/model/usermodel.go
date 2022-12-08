@@ -37,7 +37,7 @@ func (m *defaultUserModel) FindAllPage(ctx context.Context, req *user.UserListRe
 
 	query := fmt.Sprintf("select * from %s ORDER BY `id` ASC  LIMIT ? OFFSET ?", m.table)
 	fmt.Println("log：", query)
-	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, req.Limit, req.Page-1)
+	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, req.Limit, (req.Page-1)*req.Limit)
 
 	switch err {
 	case nil:
