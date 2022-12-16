@@ -51,7 +51,7 @@ func (ps *Pager) CheckHasNext() bool {
 }
 
 // HostsReq 分页请求主机数据
-func (ps *Pager) HostsReq(client *ecs.Client) ([]ecs.DescribeInstancesResponseBodyInstancesInstance,error) {
+func (ps *Pager) HostsReq(client *ecs.Client) ([]ecs.DescribeInstancesResponseBodyInstancesInstance, error) {
 	ps.Req.PageNumber = tea.Int32(ps.PageNumber)
 	ps.Req.PageSize = tea.Int32(ps.PageSize)
 	resp, err := client.DescribeInstances(&ps.Req)
@@ -63,5 +63,5 @@ func (ps *Pager) HostsReq(client *ecs.Client) ([]ecs.DescribeInstancesResponseBo
 		set = append(set, *v)
 	}
 	ps.TotalCount = *resp.Body.TotalCount
-	return set,nil
+	return set, nil
 }

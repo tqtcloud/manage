@@ -1,5 +1,6 @@
 Name: host.rpc
 ListenOn: 0.0.0.0:9004
+Timeout: 100000
 Etcd:
   Hosts:
   - 192.168.0.102:2379

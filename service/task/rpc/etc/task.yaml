@@ -23,6 +23,7 @@ UserRpc:
 HostRpc:
   App: hostapi                          # App 标识
   Token: 6jKNZbEpYGeUMAifz10gOnmoty3TV  # Token 值
+  Timeout: 100000
   Etcd:
     Hosts:
       - 192.168.0.102:2379

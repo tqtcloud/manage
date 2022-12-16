@@ -7,9 +7,8 @@ import (
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/internal/server"
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/types/host"
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

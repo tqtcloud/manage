@@ -10,9 +10,8 @@ import (
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/types/host"
 	"github.com/tqtcloud/resp/errorx"
-	"time"
-
 	"github.com/zeromicro/go-zero/core/logx"
+	"time"
 )
 
 type HostSyncLogic struct {
@@ -30,6 +29,7 @@ func NewHostSyncLogic(ctx context.Context, svcCtx *svc.ServiceContext) *HostSync
 }
 
 func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse, error) {
+	startFuncTime := time.Now() // 获取当前时间
 	hosts := make([]*host.DeleteResponse, 0)
 
 	aliClient := client.NewAliCloudClient(in.AccessKeyId, in.AccessKeySecret, in.Region)
@@ -53,12 +53,20 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 			ines = append(ines, v)
 			//l.Infof("id为：%s 实例名：%s \n", *v.InstanceId, *v.InstanceName)
 			sqData, err := l.svcCtx.HostsModel.FindOne(l.ctx, *v.InstanceId)
-			if err == nil {
-				//return nil, errorx.NewDefaultError("InstanceId不存在,即将同步该条主机信息")
-				l.Logger.Infof("InstanceId: %s 主机名：%s 不存在,即将同步该条主机信息", *v.InstanceId, *v.InstanceName)
-			}
+			//if err == model.ErrNotFound {
+			//	//return nil, errorx.NewDefaultError("InstanceId不存在,即将同步该条主机信息")
+			//	l.Logger.Infof("InstanceId: %s 主机名：%s 不存在,即将同步该条主机信息", *v.InstanceId, *v.InstanceName)
+			//}
 			// 如果没有数据则创建任务
 			if err == model.ErrNotFound {
+				l.Logger.Infof("InstanceId: %s 主机名：%s 不存在,即将同步该条主机信息", *v.InstanceId, *v.InstanceName)
+
+				// 判断如果实例是经典网络的话，是没有主私网IP的
+				primaryIpAddress := "无"
+				if tea.StringValue(v.InstanceNetworkType) != "classic" {
+					primaryIpAddress = tea.StringValue(v.NetworkInterfaces.NetworkInterface[0].PrimaryIpAddress)
+				}
+
 				newInstanceHost := model.Hosts{
 					InstanceId:              tea.StringValue(v.InstanceId),
 					Regionid:                tea.StringValue(v.RegionId),
@@ -76,14 +84,14 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 					InstanceChargeType:      tea.StringValue(v.InstanceChargeType),
 					InternetMaxBandwidthOut: int64(tea.Int32Value(v.InternetMaxBandwidthOut)),
 					InternetMaxBandwidthIn:  int64(tea.Int32Value(v.InternetMaxBandwidthIn)),
-					Primaryip:               tea.StringValue(v.NetworkInterfaces.NetworkInterface[0].PrimaryIpAddress),
+					Primaryip:               primaryIpAddress,
 					Publicip:                v.PublicIpAddress.String(),
 					EipAddresses:            tea.StringValue(v.EipAddress.IpAddress),
 					SecurityGroupId:         v.SecurityGroupIds.String(),
 				}
 				l.Logger.Infof("实例id为：%s 实例名：%s, 地域: %s,", newInstanceHost.InstanceId, newInstanceHost.InstanceName, newInstanceHost.Regionid)
 				_, err := l.svcCtx.HostsModel.Insert(context.Background(), &newInstanceHost)
-				time.Sleep(30 * time.Millisecond)
+				//time.Sleep(5 * time.Millisecond)
 				if err != nil {
 					l.Logger.Errorf("实例创建错误: %s", err)
 					totalFailed++
@@ -139,10 +147,10 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 					EipAddresses:            tea.StringValue(v.EipAddress.IpAddress),
 					SecurityGroupId:         v.SecurityGroupIds.String(),
 				}
-				l.Logger.Infof("实例id为：%s 实例名：%s, 地域: %s,", newInstanceHost.InstanceId, newInstanceHost.InstanceName, newInstanceHost.Regionid)
+				l.Logger.Infof("实例存在,执行更新 实例id为：%s 实例名：%s, 地域: %s,", newInstanceHost.InstanceId, newInstanceHost.InstanceName, newInstanceHost.Regionid)
 
 				err := l.svcCtx.HostsModel.Update(context.Background(), &newInstanceHost)
-				time.Sleep(30 * time.Millisecond)
+				//time.Sleep(5 * time.Millisecond)
 
 				if err != nil {
 					l.Logger.Errorf("实例同步更新错误: %s", err)
@@ -177,6 +185,7 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 		}
 		l.Infof("本次同步ECS数据共计 %d 条：", len(ines))
 	}
+	l.Logger.Infof("主机同步完成,同步耗时: %0.2f 秒", time.Since(startFuncTime).Seconds())
 
 	return &host.GetListResponse{
 		Data: hosts,

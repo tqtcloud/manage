@@ -29,7 +29,6 @@ func NewTaskCallbackLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Task
 
 func (l *TaskCallbackLogic) TaskCallback(in *task.CallbackRequest) (*task.CallbackResponse, error) {
 	l.Logger.Info("TaskCallback 开始回调执行", in.TaskId, in.SecretId)
-	time.Sleep(3 * time.Second)
 	switch in.Vendor {
 	case task.Vendor_AliYun:
 		switch in.TaskType {

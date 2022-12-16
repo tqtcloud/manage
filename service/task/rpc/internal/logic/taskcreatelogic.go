@@ -85,8 +85,10 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 		//	Token: "6jKNZbEpYGeUMAifz10gOnmoty3TV",
 		//}))
 
-		callbackClient := NewTaskCallbackLogic(context.Background(), l.svcCtx)
 		go func() {
+			ctx1, cel := context.WithTimeout(context.Background(), time.Second*300)
+			defer cel()
+			callbackClient := NewTaskCallbackLogic(ctx1, l.svcCtx)
 			defer func() {
 				if err := recover(); err != nil {
 					l.Errorf("panic error:%", err)
