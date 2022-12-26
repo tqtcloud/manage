@@ -10,7 +10,7 @@ info(
 
 type (
 	// 创建结构体
-	CreateRequest {
+	CreateTaskRequest {
 		TaskName string `json:"taskname"`
 		Vendor   int64  `json:"vendor"`
 		TaskType int64  `json:"tasktype"`
@@ -19,7 +19,7 @@ type (
 		UserId   int64  `json:"userid"`
 	}
 
-	CreateResponse {
+	CreateTaskResponse {
 		Id         int64  `json:"id"`
 		TaskName   string `json:"taskname"`
 		Vendor     string `json:"vendor"`
@@ -34,10 +34,10 @@ type (
 		UpdateTime string `json:"update_time"`
 	}
 	// 删除结构体
-	DeleteRequest {
+	DeleteTaskRequest {
 		Id int64 `path:"id"`
 	}
-	DeleteResponse {
+	DeleteTaskResponse {
 		Id           int64  `json:"id"`
 		TaskName     string `json:"taskname"`
 		Vendor       string `json:"vendor"`
@@ -55,12 +55,12 @@ type (
 		UpdateTime   string `json:"update_time"`
 	}
 	// 分页查询
-	GetListRequest {
+	GetTaskListRequest {
 		Page  int64 `form:"page"`
 		Limit int64 `form:"limit"`
 	}
 
-	GetListResponse {
+	GetTaskListResponse {
 		Id           int64  `json:"id"`
 		TaskName     string `json:"taskname"`
 		Vendor       string `json:"vendor"`
@@ -78,7 +78,7 @@ type (
 		UpdateTime   string `json:"update_time"`
 	}
 	// id查询
-	GetIdRequest {
+	GetTaskIdRequest {
 		Id int64 `path:"id"`
 	}
 )
@@ -91,14 +91,14 @@ type (
 service front-api {
 	@doc "创建任务"
 	@handler CreateTask
-	post /create(CreateRequest) returns (CreateResponse)
+	post /create(CreateTaskRequest) returns (CreateTaskResponse)
 	@doc "删除任务"
 	@handler DeleteTask
-	delete /delete/:id(DeleteRequest) returns (DeleteResponse)
+	delete /delete/:id(DeleteTaskRequest) returns (DeleteTaskResponse)
 	@doc "分页查询任务"
 	@handler GetListTask
-	get / (GetListRequest) returns (GetListResponse)
+	get / (GetTaskListRequest) returns (GetTaskListResponse)
 	@doc "指定ID查询任务信息"
 	@handler GetIdTask
-	get /:id(GetIdRequest) returns (GetListResponse)
+	get /:id(GetTaskIdRequest) returns (GetTaskListResponse)
 }

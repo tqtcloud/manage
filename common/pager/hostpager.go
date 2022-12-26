@@ -19,7 +19,7 @@ func NewPager(regionId string) *Pager {
 	return &Pager{
 		Req:        ecs.DescribeInstancesRequest{RegionId: tea.String(regionId)},
 		TotalCount: 10,
-		PageSize:   10,
+		PageSize:   50,
 		PageNumber: 0,
 		RegionId:   regionId,
 	}

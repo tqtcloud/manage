@@ -124,6 +124,10 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 				totalSucceed++
 				continue
 			}
+			primaryIpAddress := "无"
+			if tea.StringValue(v.InstanceNetworkType) != "classic" {
+				primaryIpAddress = tea.StringValue(v.NetworkInterfaces.NetworkInterface[0].PrimaryIpAddress)
+			}
 			if tea.StringValue(v.InstanceId) == sqData.InstanceId {
 				newInstanceHost := model.Hosts{
 					InstanceId:              tea.StringValue(v.InstanceId),
@@ -142,7 +146,7 @@ func (l *HostSyncLogic) HostSync(in *host.CreateRequest) (*host.GetListResponse,
 					InstanceChargeType:      tea.StringValue(v.InstanceChargeType),
 					InternetMaxBandwidthOut: int64(tea.Int32Value(v.InternetMaxBandwidthOut)),
 					InternetMaxBandwidthIn:  int64(tea.Int32Value(v.InternetMaxBandwidthIn)),
-					Primaryip:               tea.StringValue(v.NetworkInterfaces.NetworkInterface[0].PrimaryIpAddress),
+					Primaryip:               primaryIpAddress,
 					Publicip:                v.PublicIpAddress.String(),
 					EipAddresses:            tea.StringValue(v.EipAddress.IpAddress),
 					SecurityGroupId:         v.SecurityGroupIds.String(),

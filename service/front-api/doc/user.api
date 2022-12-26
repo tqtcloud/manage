@@ -49,8 +49,8 @@ type (
 	}
 
 	UserListRequest {
-		Page  int64 `json:"page"`
-		Limit int64 `json:"limit"`
+		Page  int64 `form:"page"`
+		Limit int64 `form:"limit"`
 	}
 	// 用户列表
 	UserListResponse {
@@ -61,22 +61,29 @@ type (
 		Email  string `json:"email"`
 	}
 )
-
-service User {
+@server(
+    group: user
+	prefix: /user-api/v1
+)
+service front-api {
+	@doc "登录用户"
 	@handler Login
-	post /api/user/login(LoginRequest) returns  (LoginResponse)
-	@handler Register
-	post /api/user/register(RegisterRequest) returns (RegisterResponse)
+	post /login(LoginRequest) returns  (LoginResponse)
 }
 
 @server(
 	jwt: Auth
-	group user
+	group: user
 	prefix: /user-api/v1
 )
 service front-api {
+	@doc "自身用户信息查询"
 	@handler UserInfo
-	post /userinfo() returns (UserInfoResponse)
+	post /userinfo returns (UserInfoResponse)
+	@doc "分页用户"
 	@handler UserList
-	post /userlist(UserListRequest) returns (UserListResponse)
+	get /(UserListRequest) returns (UserListResponse)
+	@doc "创建用户"
+	@handler Register
+	post /register(RegisterRequest) returns (RegisterResponse)
 }
