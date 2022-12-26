@@ -1,0 +1,13 @@
+syntax = "v1"
+import "doc/user.api"
+import "doc/secret.api"
+import "doc/task.api"
+
+info(
+    title: "前端统一API"
+    desc: "统一的前端API入口"
+    author: "type author here"
+    email: "type email here"
+    version: "v1"
+)
+
