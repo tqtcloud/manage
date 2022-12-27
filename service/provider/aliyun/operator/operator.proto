@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package host;
+option go_package="./operator";
+
+// 创建结构体
+message CreateHostRequest {
+  string  AccessKeyId =1;
+  string  AccessKeySecret =2;
+  string Vendor = 3;
+  string Region = 6;
+  string TaskType = 4;
+}
+message CreateHostResponse {
+  string InstanceId =1;
+  string Regionid =2;
+  string  InstanceName =3;
+  string  ExpiredTime =4;
+  string  CreationTime =5;
+  string  KeyPairName =6;
+  string  Description =7;
+  string OsName =8;
+  int64  ImageId =9;
+  string   GpuAmount =10;
+  string  Cpu =11;
+  string  Memory =12;
+  string  OsType =13;
+  string  InstanceType =14;
+  string  InstanceChargeType =15;
+  int64  InternetMaxBandwidth_out =16;
+  int64  InternetMaxBandwidth_in =17;
+  string  Primaryip =18;
+  string  Publicip =19;
+  string  EipAddresses =20;
+  string  security_group_id =21;
+}
+
+// 删除结构体
+message DeleteHostRequest {
+  string InstanceId =1;
+}
+message DeleteHostResponse {
+  string InstanceId =1;
+  string Regionid =2;
+  string  InstanceName =3;
+  string  ExpiredTime =4;
+  string  CreationTime =5;
+  string  KeyPairName =6;
+  string  Description =7;
+  string OsName =8;
+  string  ImageId =9;
+  int64   GpuAmount =10;
+  int64  Cpu =11;
+  int64  Memory =12;
+  string  OsType =13;
+  string  InstanceType =14;
+  string  InstanceChargeType =15;
+  int64  InternetMaxBandwidth_out =16;
+  int64  InternetMaxBandwidth_in =17;
+  string  Primaryip =18;
+  string  Publicip =19;
+  string  EipAddresses =20;
+  string  security_group_id =21;
+}
+
+
+// 分页查询
+message GetListRequest {
+  int64 Page  =1;
+  int64 Limit  =2;
+}
+message GetListResponse {
+  repeated DeleteHostResponse data = 1;
+}
+
+// ID查询
+message GetIdHostRequest {
+  string InstanceId =1;
+}
+
+
+service Operator {
+  rpc HostSync(CreateHostRequest) returns(GetListResponse);
+  rpc HostDelete(DeleteHostRequest) returns(DeleteHostResponse);
+  rpc HostUpdate(CreateHostRequest) returns(CreateHostResponse);
+  rpc HostList(GetListRequest) returns(GetListResponse);
+  rpc HostGetId(GetIdHostRequest) returns(DeleteHostResponse);
+}
