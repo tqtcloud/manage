@@ -2,12 +2,12 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"github.com/tqtcloud/manage/common/cryptx"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/user/model"
 	"github.com/tqtcloud/manage/service/user/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/user/rpc/types/user"
-	"github.com/tqtcloud/resp/errorx"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -30,7 +30,7 @@ func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterRespon
 	// 判断Name是否已经注册
 	_, err := l.svcCtx.UserModel.FindOneByName(l.ctx, in.Name)
 	if err == nil {
-		return nil, errorx.NewUserError("用户已存在,请联系管理员")
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.UsernameExistError), "数据为 err:%v,user:%+v", err, in.Name)
 	}
 
 	if err == model.ErrNotFound {
@@ -44,14 +44,13 @@ func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterRespon
 
 		resp, err := l.svcCtx.UserModel.Insert(l.ctx, &newUser)
 		if err != nil {
-			l.Logger.Errorf("用户注册错误: %s", err)
-			return nil, errorx.NewUserError("内部错误请联系,请联系管理员")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "用户注册错误数据为 err:%v,user:%+v", err, in.Name)
 		}
 
 		newUser.Id, err = resp.LastInsertId()
 		if err != nil {
 			l.Logger.Errorf("数据库递增错误: %s", err)
-			return nil, errorx.NewUserError("内部错误请联系,请联系管理员")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserDbInsertError), "数据库递增错误: err:%v,user:%+v", err, in.Name)
 		}
 		return &user.RegisterResponse{
 			Id:     newUser.Id,
@@ -62,5 +61,5 @@ func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterRespon
 		}, nil
 	}
 
-	return nil, errorx.NewDefaultError("内部错误请联系,请联系管理员")
+	return nil, xerr.NewErrMsg("默认错误请联系管理员")
 }

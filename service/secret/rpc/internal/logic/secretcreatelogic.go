@@ -2,12 +2,12 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"github.com/tqtcloud/manage/common/desencryption"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/secret/model"
 	"github.com/tqtcloud/manage/service/secret/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
-	"github.com/tqtcloud/resp/errorx"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -28,7 +28,7 @@ func NewSecretCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Secr
 func (l *SecretCreateLogic) SecretCreate(in *secret.CreateRequest) (*secret.CreateResponse, error) {
 	_, err := l.svcCtx.SecretModel.FindOneByAccessKeyId(l.ctx, in.AccessKeyId)
 	if err == nil {
-		return nil, errorx.NewDefaultError("AccessKeyId已存在,请重新添加")
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIDExistError), "数据为 err:%v,Secret:%+v", err, in.AccessKeyId)
 	}
 	sk, _ := desencryption.Encrypt(in.AccessKeySecret, []byte(l.svcCtx.Config.Salt))
 	if err == model.ErrNotFound {
@@ -40,15 +40,12 @@ func (l *SecretCreateLogic) SecretCreate(in *secret.CreateRequest) (*secret.Crea
 
 		resp, err := l.svcCtx.SecretModel.Insert(l.ctx, &newSecret)
 		if err != nil {
-			l.Logger.Infof("厂商：%s,AccessKeyId：%s,AccessKeySecret：%s", newSecret.Vendor, newSecret.AccessKeyId, newSecret.AccessKeySecret)
-			l.Logger.Errorf("AK SK 添加错误: %s", err)
-			return nil, errorx.NewUserError("内部错误请联系,请联系管理员")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretDbInsertError), "数据为 err:%v,厂商：%s,AccessKeyId：%s,AccessKeySecret：%s", err, newSecret.Vendor, newSecret.AccessKeyId, newSecret.AccessKeySecret)
 		}
 
 		newSecret.Id, err = resp.LastInsertId()
 		if err != nil {
-			l.Logger.Errorf("数据库递增错误: %s", err)
-			return nil, errorx.NewUserError("内部错误请联系,请联系管理员")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretDbInsertError), "数据库递增错误 err:%v,Secret:%+v", err, in.AccessKeyId)
 		}
 		return &secret.CreateResponse{
 			Id:              newSecret.Id,
@@ -58,5 +55,5 @@ func (l *SecretCreateLogic) SecretCreate(in *secret.CreateRequest) (*secret.Crea
 		}, nil
 	}
 
-	return nil, errorx.NewDefaultError("内部错误请联系,请联系管理员")
+	return nil, xerr.NewErrMsg("默认错误请联系管理员")
 }

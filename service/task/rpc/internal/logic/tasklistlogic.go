@@ -2,8 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/task/model"
-	"github.com/tqtcloud/resp/errorx"
 	"strconv"
 
 	"github.com/tqtcloud/manage/service/task/rpc/internal/svc"
@@ -30,9 +31,9 @@ func (l *TaskListLogic) TaskList(in *task.GetListRequest) (*task.GetListResponse
 	list, err := l.svcCtx.TaskModel.FindAllPage(l.ctx, in)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return nil, errorx.NewDefaultError(err.Error())
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIDNoExistError), "task 查询 FindAllPage err:%v", err)
 		}
-		return nil, errorx.NewDefaultError(err.Error())
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "其他错误 err:%v", err)
 	}
 
 	taskList := make([]*task.DeleteResponse, 0)

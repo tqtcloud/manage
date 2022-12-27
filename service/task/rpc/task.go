@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/tqtcloud/manage/common/interceptor/rpcserver"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/tqtcloud/manage/service/task/rpc/internal/config"
@@ -35,6 +36,10 @@ func main() {
 	})
 	defer s.Stop()
 	logx.DisableStat()
+
+	//rpc log,grpc的全局拦截器
+	s.AddUnaryInterceptors(rpcserver.LoggerInterceptor)
+
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }

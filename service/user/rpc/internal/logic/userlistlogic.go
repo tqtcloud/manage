@@ -2,11 +2,11 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/user/model"
 	"github.com/tqtcloud/manage/service/user/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/user/rpc/types/user"
-	"github.com/tqtcloud/resp/errorx"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -28,9 +28,9 @@ func (l *UserListLogic) UserList(in *user.UserListRequest) (*user.UserListRespon
 	list, err := l.svcCtx.UserModel.FindAllPage(l.ctx, in)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return nil, errorx.NewDefaultError(err.Error())
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.UsernameNoExistError), "用户不存在错误: err:%v", err)
 		}
-		return nil, errorx.NewDefaultError(err.Error())
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "未知错误: err:%v", err)
 	}
 
 	orderList := make([]*user.UserInfoResponse, 0)

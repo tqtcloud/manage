@@ -2,10 +2,11 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
 	"github.com/tqtcloud/manage/service/task/model"
 	"github.com/tqtcloud/manage/service/user/rpc/types/user"
-	"github.com/tqtcloud/resp/errorx"
 	"strconv"
 	"time"
 
@@ -33,7 +34,7 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 	secretData, err := l.svcCtx.SecretRpc.SecretGetId(l.ctx, &secret.GetIdRequest{Id: in.SecretId})
 	if err != nil {
 		l.Logger.Errorf("task 查询 SecretGetId %s", err)
-		return nil, errorx.NewDefaultError("Secret 获取错误")
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIDNoExistError), "task 查询 SecretGetId err:%v,Secret:%+v", err, in.SecretId)
 	}
 	//sk, _ := desencryption.Decrypt(secretData.AccessKeySecret, []byte(l.svcCtx.Config.Salt))
 	//l.Infof("秘钥信息为：%s", sk)
@@ -42,7 +43,7 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 
 	_, err = l.svcCtx.TaskModel.FindOneByTaskname(l.ctx, in.TaskName)
 	if err == nil {
-		return nil, errorx.NewDefaultError("TaskName已存在,请重新输入")
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TaskIDExistError), "查询 FindOneByTaskname err:%v,Secret:%+v", err, in.TaskName)
 	}
 	// 如果没有数据则创建任务
 	if err == model.ErrNotFound {
@@ -66,13 +67,13 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 		resp, err := l.svcCtx.TaskModel.Insert(l.ctx, &newTask)
 		if err != nil {
 			l.Logger.Errorf("任务创建错误: %s", err)
-			return nil, errorx.NewUserError("任务创建错误,请联系管理员")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.TaskDbInsertError), "任务创建错误 err:%v,task:%+v", err, in.TaskName)
 		}
 
 		newTask.Id, err = resp.LastInsertId()
 		if err != nil {
 			l.Logger.Errorf("数据库递增错误: %s", err)
-			return nil, errorx.NewUserError("数据库递增错误,请联系管理员")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "数据库递增错误 err:%v,task:%+v", err, in.TaskName)
 		}
 
 		// 回调处理任务运行的状态同步等
@@ -120,5 +121,5 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 		}, nil
 	}
 
-	return nil, errorx.NewDefaultError("内部错误请联系,请联系管理员")
+	return nil, xerr.NewErrMsg("默认错误请联系管理员")
 }

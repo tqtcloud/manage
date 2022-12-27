@@ -2,11 +2,11 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/secret/model"
 	"github.com/tqtcloud/manage/service/secret/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
-	"github.com/tqtcloud/resp/errorx"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -29,17 +29,17 @@ func (l *SecretDeleteLogic) SecretDelete(in *secret.DeleteRequest) (*secret.Dele
 	resp, err := l.svcCtx.SecretModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return nil, errorx.NewCodeError(1010, "Secret 不存在")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIDNoExistError), "数据为 err:%v,Secret:%+v", err, in.Id)
 		}
-		return nil, errorx.NewCodeError(1011, err.Error())
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "其他错误 err:%v,Secret:%+v", err, in.Id)
 	}
 
 	err = l.svcCtx.SecretModel.Delete(l.ctx, in.Id)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return nil, errorx.NewCodeError(1010, "Secret 不存在")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIDNoExistError), "数据为 err:%v,Secret:%+v", err, in.Id)
 		}
-		return nil, errorx.NewCodeError(1011, err.Error())
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "数据为 err:%v,Secret:%+v", err, in.Id)
 	}
 
 	return &secret.DeleteResponse{

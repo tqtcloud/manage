@@ -2,11 +2,11 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/user/model"
 	"github.com/tqtcloud/manage/service/user/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/user/rpc/types/user"
-	"github.com/tqtcloud/resp/errorx"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -29,9 +29,9 @@ func (l *UserInfoLogic) UserInfo(in *user.UserInfoRequest) (*user.UserInfoRespon
 	resp, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return nil, errorx.NewUserError("用户不存在")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.UsernameNoExistError), "用户不存在错误: err:%v,user:%+v", err, in.Id)
 		}
-		return nil, errorx.NewUserError(err.Error())
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "未知错误: err:%v,user:%+v", err, in.Id)
 	}
 
 	return &user.UserInfoResponse{

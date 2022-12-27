@@ -7,6 +7,7 @@ require (
 	github.com/alibabacloud-go/ecs-20140526/v3 v3.0.1
 	github.com/alibabacloud-go/tea v1.1.20
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/pkg/errors v0.9.1
 	github.com/tqtcloud/resp v0.0.0-20221124134947-714e733d57d1
 	github.com/zeromicro/go-zero v1.4.2
 	golang.org/x/crypto v0.3.0

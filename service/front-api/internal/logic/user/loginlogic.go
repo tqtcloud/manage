@@ -2,8 +2,9 @@ package user
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/common/errorx"
+	"github.com/pkg/errors"
 	"github.com/tqtcloud/manage/common/jwtx"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/user/rpc/types/user"
 	"time"
 
@@ -33,7 +34,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.LoginResponse, 
 		Password: req.Password,
 	})
 	if err != nil {
-		return nil, errorx.NewUserError("登录失败,账号密码错误")
+		return nil, err
 	}
 
 	now := time.Now().Unix()
@@ -42,7 +43,7 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.LoginResponse, 
 	accessToken, err := jwtx.GetToken(l.svcCtx.Config.Auth.AccessSecret, now, accessExpire, res.Id)
 	if err != nil {
 		l.Logger.Errorf("GetToken error :%s", err.Error())
-		return nil, errorx.NewUserError(err.Error())
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TokenGenerateError), "req: %+v,rpc err:%+v", req, err)
 	}
 
 	return &types.LoginResponse{

@@ -2,12 +2,12 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"github.com/tqtcloud/manage/common/desencryption"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/secret/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
 	"github.com/tqtcloud/manage/service/user/model"
-	"github.com/tqtcloud/resp/errorx"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -29,9 +29,9 @@ func (l *SecretUpdateLogic) SecretUpdate(in *secret.UpdateRequest) (*secret.Upda
 	res, err := l.svcCtx.SecretModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return nil, errorx.NewCodeError(1011, "ID 不存在,重新输入")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIDNoExistError), "数据为 err:%v,Secret:%+v", err, in.Id)
 		}
-		return nil, errorx.NewCodeError(1011, err.Error())
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "其他错误 err:%v", err)
 	}
 
 	if in.Vendor != "" {
@@ -47,8 +47,7 @@ func (l *SecretUpdateLogic) SecretUpdate(in *secret.UpdateRequest) (*secret.Upda
 
 	err = l.svcCtx.SecretModel.Update(l.ctx, res)
 	if err != nil {
-		l.Logger.Errorf("更新AK SK 错误: %s", err.Error())
-		return nil, errorx.NewCodeError(1011, "更新AK SK 错误")
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretUpdateError), "更新失败 err:%v,Secret:%+v", err, in.Id)
 	}
 
 	return &secret.UpdateResponse{

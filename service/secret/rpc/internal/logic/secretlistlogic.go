@@ -2,9 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/secret/model"
-	"github.com/tqtcloud/resp/errorx"
-
 	"github.com/tqtcloud/manage/service/secret/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
 
@@ -29,9 +29,9 @@ func (l *SecretListLogic) SecretList(in *secret.GetListRequest) (*secret.GetList
 	list, err := l.svcCtx.SecretModel.FindAllPage(l.ctx, in)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return nil, errorx.NewDefaultError(err.Error())
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIDNoExistError), "数据不存在 err:%v", err)
 		}
-		return nil, errorx.NewDefaultError(err.Error())
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "其他错误 err:%v", err)
 	}
 
 	secretList := make([]*secret.CreateResponse, 0)

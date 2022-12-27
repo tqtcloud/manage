@@ -2,8 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/task/model"
-	"github.com/tqtcloud/resp/errorx"
 	"strconv"
 
 	"github.com/tqtcloud/manage/service/task/rpc/internal/svc"
@@ -30,9 +31,9 @@ func (l *TaskGetIdLogic) TaskGetId(in *task.GetIdRequest) (*task.DeleteResponse,
 	resp, err := l.svcCtx.TaskModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return nil, errorx.NewCodeError(1011, "ID 不存在,重新输入")
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.TaskIDNoExistError), "task 查询 TaskID err:%v,Task:%+v", err, in.Id)
 		}
-		return nil, errorx.NewCodeError(1011, err.Error())
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "其他错误 err:%v", err)
 	}
 
 	l.Infof("厂商：%s, 类型：%s", resp.Vendor, resp.Tasktype)
