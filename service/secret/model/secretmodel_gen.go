@@ -19,8 +19,8 @@ import (
 var (
 	secretFieldNames          = builder.RawFieldNames(&Secret{})
 	secretRows                = strings.Join(secretFieldNames, ",")
-	secretRowsExpectAutoSet   = strings.Join(stringx.Remove(secretFieldNames, "`id`", "`update_at`", "`updated_at`", "`update_time`", "`create_at`", "`created_at`", "`create_time`"), ",")
-	secretRowsWithPlaceHolder = strings.Join(stringx.Remove(secretFieldNames, "`id`", "`update_at`", "`updated_at`", "`update_time`", "`create_at`", "`created_at`", "`create_time`"), "=?,") + "=?"
+	secretRowsExpectAutoSet   = strings.Join(stringx.Remove(secretFieldNames, "`create_at`", "`created_at`", "`create_time`", "`update_at`", "`updated_at`", "`update_time`"), ",")
+	secretRowsWithPlaceHolder = strings.Join(stringx.Remove(secretFieldNames, "`id`", "`create_at`", "`created_at`", "`create_time`", "`update_at`", "`updated_at`", "`update_time`"), "=?,") + "=?"
 
 	cacheSecretIdPrefix          = "cache:secret:id:"
 	cacheSecretAccessKeyIdPrefix = "cache:secret:accessKeyId:"
@@ -29,10 +29,10 @@ var (
 type (
 	secretModel interface {
 		Insert(ctx context.Context, data *Secret) (sql.Result, error)
-		FindOne(ctx context.Context, id int64) (*Secret, error)
+		FindOne(ctx context.Context, id string) (*Secret, error)
 		FindOneByAccessKeyId(ctx context.Context, accessKeyId string) (*Secret, error)
 		Update(ctx context.Context, data *Secret) error
-		Delete(ctx context.Context, id int64) error
+		Delete(ctx context.Context, id string) error
 	}
 
 	defaultSecretModel struct {
@@ -41,7 +41,7 @@ type (
 	}
 
 	Secret struct {
-		Id              int64     `db:"id"`
+		Id              string    `db:"id"`              // 秘钥Id
 		Vendor          string    `db:"vendor"`          // 云厂商:腾讯/阿里/华为
 		AccessKeyId     string    `db:"accessKeyId"`     // 云厂商 AK accessKeyId
 		AccessKeySecret string    `db:"accessKeySecret"` // 云厂商 SK accessKeySecret
@@ -57,7 +57,7 @@ func newSecretModel(conn sqlx.SqlConn, c cache.CacheConf) *defaultSecretModel {
 	}
 }
 
-func (m *defaultSecretModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultSecretModel) Delete(ctx context.Context, id string) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -72,7 +72,7 @@ func (m *defaultSecretModel) Delete(ctx context.Context, id int64) error {
 	return err
 }
 
-func (m *defaultSecretModel) FindOne(ctx context.Context, id int64) (*Secret, error) {
+func (m *defaultSecretModel) FindOne(ctx context.Context, id string) (*Secret, error) {
 	secretIdKey := fmt.Sprintf("%s%v", cacheSecretIdPrefix, id)
 	var resp Secret
 	err := m.QueryRowCtx(ctx, &resp, secretIdKey, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
@@ -113,8 +113,8 @@ func (m *defaultSecretModel) Insert(ctx context.Context, data *Secret) (sql.Resu
 	secretAccessKeyIdKey := fmt.Sprintf("%s%v", cacheSecretAccessKeyIdPrefix, data.AccessKeyId)
 	secretIdKey := fmt.Sprintf("%s%v", cacheSecretIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, secretRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Vendor, data.AccessKeyId, data.AccessKeySecret)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, secretRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Id, data.Vendor, data.AccessKeyId, data.AccessKeySecret)
 	}, secretAccessKeyIdKey, secretIdKey)
 	return ret, err
 }

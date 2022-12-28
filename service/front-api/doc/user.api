@@ -32,7 +32,7 @@ type (
 		Email    string `json:"email"`
 	}
 	RegisterResponse {
-		Id     int64  `json:"id"`
+		Id     string  `json:"id"`
 		Name   string `json:"name"`
 		Gender int64  `json:"gender"`
 		Mobile string `json:"mobile"`
@@ -41,7 +41,7 @@ type (
 
 	// 用户信息
 	UserInfoResponse {
-		Id     int64  `json:"id"`
+		Id     string  `json:"id"`
 		Name   string `json:"name"`
 		Gender int64  `json:"gender"`
 		Mobile string `json:"mobile"`
@@ -54,7 +54,7 @@ type (
 	}
 	// 用户列表
 	UserListResponse {
-		Id     int64  `json:"id"`
+		Id     string  `json:"id"`
 		Name   string `json:"name"`
 		Gender int64  `json:"gender"`
 		Mobile string `json:"mobile"`

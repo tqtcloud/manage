@@ -2,7 +2,6 @@ package task
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/common/errorx"
 	"github.com/tqtcloud/manage/service/task/rpc/types/task"
 
 	"github.com/tqtcloud/manage/service/front-api/internal/svc"
@@ -26,16 +25,18 @@ func NewCreateTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 }
 
 func (l *CreateTaskLogic) CreateTask(req *types.CreateTaskRequest) (resp *types.CreateTaskResponse, err error) {
+	uid, _ := l.ctx.Value("uid").(string)
+	logx.Infof("创建任务用户id：%s", uid)
 	res, err := l.svcCtx.TaskRpc.TaskCreate(l.ctx, &task.CreateRequest{
+		UserId:   uid,
 		TaskName: req.TaskName,
 		Vendor:   task.Vendor(req.Vendor),
 		TaskType: task.TaskType(req.TaskType),
 		Region:   req.Region,
 		SecretId: req.SecretId,
-		UserId:   req.UserId,
 	})
 	if err != nil {
-		return nil, errorx.NewDefaultError(err.Error())
+		return nil, err
 	}
 
 	return &types.CreateTaskResponse{

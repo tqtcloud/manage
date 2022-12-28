@@ -29,7 +29,7 @@ func (l *HostGetIdLogic) HostGetId(in *operator.GetIdHostRequest) (*operator.Del
 	resp, err := l.svcCtx.HostsModel.FindOne(l.ctx, in.InstanceId)
 	if err != nil {
 		if err == model.ErrNotFound {
-			return nil, errors.Wrapf(xerr.NewErrCode(xerr.InstanceNoExistError), "operator 查询 Host ID err:%v,Task:%+v", err, in.InstanceId)
+			return nil, errors.Wrapf(xerr.NewErrCode(500005), "operator 查询 Host ID err:%v,Task:%+v", err, in.InstanceId)
 		}
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "其他错误 err:%v", err)
 	}

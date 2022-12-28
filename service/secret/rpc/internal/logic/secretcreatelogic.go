@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/pkg/errors"
+	"github.com/rs/xid"
 	"github.com/tqtcloud/manage/common/desencryption"
 	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/secret/model"
@@ -33,6 +34,7 @@ func (l *SecretCreateLogic) SecretCreate(in *secret.CreateRequest) (*secret.Crea
 	sk, _ := desencryption.Encrypt(in.AccessKeySecret, []byte(l.svcCtx.Config.Salt))
 	if err == model.ErrNotFound {
 		newSecret := model.Secret{
+			Id:              xid.New().String(),
 			Vendor:          in.Vendor,
 			AccessKeyId:     in.AccessKeyId,
 			AccessKeySecret: sk,
@@ -43,9 +45,9 @@ func (l *SecretCreateLogic) SecretCreate(in *secret.CreateRequest) (*secret.Crea
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretDbInsertError), "数据为 err:%v,厂商：%s,AccessKeyId：%s,AccessKeySecret：%s", err, newSecret.Vendor, newSecret.AccessKeyId, newSecret.AccessKeySecret)
 		}
 
-		newSecret.Id, err = resp.LastInsertId()
+		rows, err := resp.RowsAffected()
 		if err != nil {
-			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretDbInsertError), "数据库递增错误 err:%v,Secret:%+v", err, in.AccessKeyId)
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretDbInsertError), "数据库递增错误 err:%v,Secret:%+v", err, rows)
 		}
 		return &secret.CreateResponse{
 			Id:              newSecret.Id,

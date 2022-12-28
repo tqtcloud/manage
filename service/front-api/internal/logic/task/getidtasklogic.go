@@ -2,12 +2,9 @@ package task
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/common/errorx"
-	"github.com/tqtcloud/manage/service/task/rpc/types/task"
-	"strconv"
-
 	"github.com/tqtcloud/manage/service/front-api/internal/svc"
 	"github.com/tqtcloud/manage/service/front-api/internal/types"
+	"github.com/tqtcloud/manage/service/task/rpc/types/task"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,12 +27,7 @@ func (l *GetIdTaskLogic) GetIdTask(req *types.GetTaskIdRequest) (resp *types.Get
 	res, err := l.svcCtx.TaskRpc.TaskGetId(l.ctx, &task.GetIdRequest{Id: req.Id})
 	if err != nil {
 		l.Logger.Errorf("TaskGetId 查询错误 %s ", err)
-		return nil, errorx.NewDefaultError("TaskGetId 查询错误")
-	}
-
-	secretId, err := strconv.ParseInt(res.SecretId, 10, 64)
-	if err != nil {
-		return nil, errorx.NewCodeError(1010, "int64 类型转换错误")
+		return nil, err
 	}
 
 	return &types.GetTaskListResponse{
@@ -43,7 +35,7 @@ func (l *GetIdTaskLogic) GetIdTask(req *types.GetTaskIdRequest) (resp *types.Get
 		TaskName:     res.TaskName,
 		Vendor:       string(res.Vendor),
 		TaskType:     string(res.TaskType),
-		SecretId:     secretId,
+		SecretId:     res.SecretId,
 		Region:       res.Region,
 		TaskUser:     res.TaskUser,
 		Status:       res.Status,

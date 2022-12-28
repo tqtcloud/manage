@@ -50,7 +50,7 @@ func (l *TaskDeleteLogic) TaskDelete(in *task.DeleteRequest) (*task.DeleteRespon
 		TaskName:     resp.Taskname,
 		Vendor:       resp.Vendor,
 		TaskType:     resp.Tasktype,
-		SecretId:     strconv.FormatInt(resp.SecretId, 10),
+		SecretId:     resp.SecretId,
 		Region:       resp.Region,
 		TaskUser:     resp.Taskuser,
 		Status:       resp.Status,

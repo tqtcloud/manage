@@ -2,7 +2,6 @@ package secret
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/common/errorx"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
 
 	"github.com/tqtcloud/manage/service/front-api/internal/svc"
@@ -29,7 +28,7 @@ func (l *GetIdSecretLogic) GetIdSecret(req *types.GetSecretIdRequest) (resp *typ
 	res, err := l.svcCtx.SecretRpc.SecretGetId(l.ctx, &secret.GetIdRequest{Id: req.Id})
 	if err != nil {
 		l.Logger.Errorf("SecretGetId 查询错误 %s ", err)
-		return nil, errorx.NewDefaultError("SecretGetId 查询错误")
+		return nil, err
 	}
 
 	return &types.GetSecretListResponse{

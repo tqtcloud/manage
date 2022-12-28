@@ -24,7 +24,7 @@ type RegisterRequest struct {
 }
 
 type RegisterResponse struct {
-	Id     int64  `json:"id"`
+	Id     string `json:"id"`
 	Name   string `json:"name"`
 	Gender int64  `json:"gender"`
 	Mobile string `json:"mobile"`
@@ -32,7 +32,7 @@ type RegisterResponse struct {
 }
 
 type UserInfoResponse struct {
-	Id     int64  `json:"id"`
+	Id     string `json:"id"`
 	Name   string `json:"name"`
 	Gender int64  `json:"gender"`
 	Mobile string `json:"mobile"`
@@ -45,7 +45,7 @@ type UserListRequest struct {
 }
 
 type UserListResponse struct {
-	Id     int64  `json:"id"`
+	Id     string `json:"id"`
 	Name   string `json:"name"`
 	Gender int64  `json:"gender"`
 	Mobile string `json:"mobile"`
@@ -59,32 +59,32 @@ type CreateSecretRequest struct {
 }
 
 type CreateSecretResponse struct {
-	Id              int64  `json:"id"`
+	Id              string `json:"id"`
 	Vendor          string `json:"vendor"`
 	AccessKeyId     string `json:"accesskeyid"`
 	AccessKeySecret string `json:"accesskeysecret"`
 }
 
 type DeleteSecretRequest struct {
-	Id int64 `path:"id"`
+	Id string `path:"id"`
 }
 
 type DeleteSecretResponse struct {
-	Id              int64  `json:"id"`
+	Id              string `json:"id"`
 	Vendor          string `json:"vendor"`
 	AccessKeyId     string `json:"accesskeyid"`
 	AccessKeySecret string `json:"accesskeysecret"`
 }
 
 type UpdateSecretRequest struct {
-	Id              int64  `json:"id"`
+	Id              string `json:"id"`
 	Vendor          string `json:"vendor"`
 	AccessKeyId     string `json:"accesskeyid"`
 	AccessKeySecret string `json:"accesskeysecret"`
 }
 
 type UpdateSecretResponse struct {
-	Id              int64  `json:"id"`
+	Id              string `json:"id"`
 	Vendor          string `json:"vendor"`
 	AccessKeyId     string `json:"accesskeyid"`
 	AccessKeySecret string `json:"accesskeysecret"`
@@ -96,31 +96,30 @@ type GetSecretListRequest struct {
 }
 
 type GetSecretListResponse struct {
-	Id              int64  `json:"id"`
+	Id              string `json:"id"`
 	Vendor          string `json:"vendor"`
 	AccessKeyId     string `json:"accesskeyid"`
 	AccessKeySecret string `json:"accesskeysecret"`
 }
 
 type GetSecretIdRequest struct {
-	Id int64 `path:"id"`
+	Id string `path:"id"`
 }
 
 type CreateTaskRequest struct {
 	TaskName string `json:"taskname"`
 	Vendor   int64  `json:"vendor"`
 	TaskType int64  `json:"tasktype"`
-	SecretId int64  `json:"secret_id"`
+	SecretId string `json:"secret_id"`
 	Region   string `json:"region"`
-	UserId   int64  `json:"userid"`
 }
 
 type CreateTaskResponse struct {
-	Id         int64  `json:"id"`
+	Id         string `json:"id"`
 	TaskName   string `json:"taskname"`
 	Vendor     string `json:"vendor"`
 	TaskType   string `json:"tasktype"`
-	SecretId   int64  `json:"secret_id"`
+	SecretId   string `json:"secret_id"`
 	Region     string `json:"secret_desc"`
 	TaskUser   string `json:"taskuser"`
 	Status     string `json:"status"`
@@ -131,15 +130,15 @@ type CreateTaskResponse struct {
 }
 
 type DeleteTaskRequest struct {
-	Id int64 `path:"id"`
+	Id string `path:"id"`
 }
 
 type DeleteTaskResponse struct {
-	Id           int64  `json:"id"`
+	Id           string `json:"id"`
 	TaskName     string `json:"taskname"`
 	Vendor       string `json:"vendor"`
 	TaskType     string `json:"tasktype"`
-	SecretId     int64  `json:"secret_id"`
+	SecretId     string `json:"secret_id"`
 	Region       string `json:"secret_desc"`
 	TaskUser     string `json:"taskuser"`
 	Status       string `json:"status"`
@@ -158,11 +157,11 @@ type GetTaskListRequest struct {
 }
 
 type GetTaskListResponse struct {
-	Id           int64  `json:"id"`
+	Id           string `json:"id"`
 	TaskName     string `json:"taskname"`
 	Vendor       string `json:"vendor"`
 	TaskType     string `json:"tasktype"`
-	SecretId     int64  `json:"secret_id"`
+	SecretId     string `json:"secret_id"`
 	Region       string `json:"secret_desc"`
 	TaskUser     string `json:"taskuser"`
 	Status       string `json:"status"`
@@ -176,7 +175,7 @@ type GetTaskListResponse struct {
 }
 
 type GetTaskIdRequest struct {
-	Id int64 `path:"id"`
+	Id string `path:"id"`
 }
 
 type HostResponse struct {
@@ -204,7 +203,7 @@ type HostResponse struct {
 }
 
 type DeleteHostRequest struct {
-	Id int64 `path:"id"`
+	Id string `path:"id"`
 }
 
 type GetHostListRequest struct {
@@ -213,7 +212,7 @@ type GetHostListRequest struct {
 }
 
 type GetHostIdRequest struct {
-	Id int64 `path:"id"`
+	Id string `path:"id"`
 }
 
 type UpdateHostRequest struct {

@@ -2,11 +2,9 @@ package host
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/types/operator"
-	"strconv"
-
 	"github.com/tqtcloud/manage/service/front-api/internal/svc"
 	"github.com/tqtcloud/manage/service/front-api/internal/types"
+	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/types/operator"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +24,7 @@ func NewDeleteHostLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 }
 
 func (l *DeleteHostLogic) DeleteHost(req *types.DeleteHostRequest) (resp *types.HostResponse, err error) {
-	res, err := l.svcCtx.AliOperatorRpc.HostDelete(l.ctx, &operator.DeleteHostRequest{InstanceId: strconv.FormatInt(req.Id, 10)})
+	res, err := l.svcCtx.AliOperatorRpc.HostDelete(l.ctx, &operator.DeleteHostRequest{InstanceId: req.Id})
 	if err != nil {
 		l.Logger.Errorf("AliOperatorRpc HostDelete 删除错误 %s ", err)
 		return nil, err

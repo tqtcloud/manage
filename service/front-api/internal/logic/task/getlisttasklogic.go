@@ -2,12 +2,9 @@ package task
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/common/errorx"
-	"github.com/tqtcloud/manage/service/task/rpc/types/task"
-	"strconv"
-
 	"github.com/tqtcloud/manage/service/front-api/internal/svc"
 	"github.com/tqtcloud/manage/service/front-api/internal/types"
+	"github.com/tqtcloud/manage/service/task/rpc/types/task"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -39,16 +36,12 @@ func (l *GetListTaskLogic) GetListTask(req *types.GetTaskListRequest) (resp []*t
 	taskList := make([]*types.GetTaskListResponse, 0)
 
 	for _, item := range res.Data {
-		secretId, err := strconv.ParseInt(item.SecretId, 10, 64)
-		if err != nil {
-			return nil, errorx.NewCodeError(1010, "int64 类型转换错误")
-		}
 		taskList = append(taskList, &types.GetTaskListResponse{
 			Id:           item.Id,
 			TaskName:     item.TaskName,
 			Vendor:       string(item.Vendor),
 			TaskType:     string(item.TaskType),
-			SecretId:     secretId,
+			SecretId:     item.SecretId,
 			Region:       item.Region,
 			TaskUser:     item.TaskUser,
 			Status:       item.Status,

@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/common/errorx"
 	"github.com/tqtcloud/manage/service/user/rpc/types/user"
 
 	"github.com/tqtcloud/manage/service/front-api/internal/svc"
@@ -34,7 +33,7 @@ func (l *RegisterLogic) Register(req *types.RegisterRequest) (resp *types.Regist
 		Password: req.Password,
 	})
 	if err != nil {
-		return nil, errorx.NewUserError(err.Error())
+		return nil, err
 	}
 
 	return &types.RegisterResponse{

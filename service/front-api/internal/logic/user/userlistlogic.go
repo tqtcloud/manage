@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/common/errorx"
 	"github.com/tqtcloud/manage/service/user/rpc/types/user"
 
 	"github.com/tqtcloud/manage/service/front-api/internal/svc"
@@ -32,7 +31,7 @@ func (l *UserListLogic) UserList(req *types.UserListRequest) (resp []*types.User
 	})
 
 	if err != nil {
-		return nil, errorx.NewDefaultError(err.Error())
+		return nil, err
 	}
 
 	userList := make([]*types.UserListResponse, 0)

@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/pkg/errors"
+	"github.com/rs/xid"
 	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
 	"github.com/tqtcloud/manage/service/task/model"
@@ -15,6 +16,8 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
+
+//var ErrUsernamePwdError = xerr.NewErrMsg("任务重复")
 
 type TaskCreateLogic struct {
 	ctx    context.Context
@@ -39,8 +42,9 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 	//sk, _ := desencryption.Decrypt(secretData.AccessKeySecret, []byte(l.svcCtx.Config.Salt))
 	//l.Infof("秘钥信息为：%s", sk)
 
-	uid, _ := l.ctx.Value("uid").(int64)
-	l.Logger.Infof("任务创建用户ID为：%d", uid)
+	//uid, _ := l.ctx.Value("uid").(string)
+
+	l.Logger.Infof("任务创建用户ID为：%s", in.UserId)
 	userinfo, _ := l.svcCtx.UserRpc.UserInfo(l.ctx, &user.UserInfoRequest{Id: in.UserId})
 
 	_, err = l.svcCtx.TaskModel.FindOneByTaskname(l.ctx, in.TaskName)
@@ -50,6 +54,7 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 	// 如果没有数据则创建任务
 	if err == model.ErrNotFound {
 		newTask := model.Task{
+			Id:           xid.New().String(),
 			Taskname:     in.TaskName,
 			Vendor:       in.Vendor.String(),
 			Tasktype:     in.TaskType.String(),
@@ -72,10 +77,10 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.TaskDbInsertError), "任务创建错误 err:%v,task:%+v", err, in.TaskName)
 		}
 
-		newTask.Id, err = resp.LastInsertId()
+		rows, err := resp.RowsAffected()
 		if err != nil {
 			l.Logger.Errorf("数据库递增错误: %s", err)
-			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "数据库递增错误 err:%v,task:%+v", err, in.TaskName)
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "数据库递增错误 err:%v,task:%+v", err, rows)
 		}
 
 		// 回调处理任务运行的状态同步等
@@ -114,7 +119,7 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 			TaskName: newTask.Taskname,
 			Vendor:   in.Vendor.String(),
 			TaskType: in.TaskType.String(),
-			SecretId: strconv.FormatInt(newTask.SecretId, 10),
+			SecretId: newTask.SecretId,
 			Region:   newTask.Region,
 			TaskUser: userinfo.Name,
 			Status:   newTask.Status,

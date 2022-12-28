@@ -27,6 +27,10 @@ func (e *CodeError) Error() string {
 	return fmt.Sprintf("ErrCode:%d，ErrMsg:%s", e.errCode, e.errMsg)
 }
 
+func (e *CodeError) Cause() string {
+	return fmt.Sprintf("ErrCode:%d，ErrMsg:%s", e.errCode, e.errMsg)
+}
+
 func NewErrCodeMsg(errCode uint32, errMsg string) *CodeError {
 	return &CodeError{errCode: errCode, errMsg: errMsg}
 }

@@ -43,7 +43,7 @@ func (l *TaskListLogic) TaskList(in *task.GetListRequest) (*task.GetListResponse
 			TaskName:     item.Taskname,
 			Vendor:       item.Vendor,
 			TaskType:     item.Tasktype,
-			SecretId:     strconv.FormatInt(item.SecretId, 10),
+			SecretId:     item.SecretId,
 			Region:       item.Region,
 			TaskUser:     item.Taskuser,
 			Status:       item.Status,

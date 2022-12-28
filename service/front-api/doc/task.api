@@ -14,17 +14,16 @@ type (
 		TaskName string `json:"taskname"`
 		Vendor   int64  `json:"vendor"`
 		TaskType int64  `json:"tasktype"`
-		SecretId int64  `json:"secret_id"`
+		SecretId string  `json:"secret_id"`
 		Region   string `json:"region"`
-		UserId   int64  `json:"userid"`
 	}
 
 	CreateTaskResponse {
-		Id         int64  `json:"id"`
+		Id         string  `json:"id"`
 		TaskName   string `json:"taskname"`
 		Vendor     string `json:"vendor"`
 		TaskType   string `json:"tasktype"`
-		SecretId   int64  `json:"secret_id"`
+		SecretId   string  `json:"secret_id"`
 		Region     string `json:"secret_desc"`
 		TaskUser   string `json:"taskuser"`
 		Status     string `json:"status"`
@@ -35,14 +34,14 @@ type (
 	}
 	// 删除结构体
 	DeleteTaskRequest {
-		Id int64 `path:"id"`
+		Id string `path:"id"`
 	}
 	DeleteTaskResponse {
-		Id           int64  `json:"id"`
+		Id           string  `json:"id"`
 		TaskName     string `json:"taskname"`
 		Vendor       string `json:"vendor"`
 		TaskType     string `json:"tasktype"`
-		SecretId     int64  `json:"secret_id"`
+		SecretId     string  `json:"secret_id"`
 		Region       string `json:"secret_desc"`
 		TaskUser     string `json:"taskuser"`
 		Status       string `json:"status"`
@@ -61,11 +60,11 @@ type (
 	}
 
 	GetTaskListResponse {
-		Id           int64  `json:"id"`
+		Id           string  `json:"id"`
 		TaskName     string `json:"taskname"`
 		Vendor       string `json:"vendor"`
 		TaskType     string `json:"tasktype"`
-		SecretId     int64  `json:"secret_id"`
+		SecretId     string  `json:"secret_id"`
 		Region       string `json:"secret_desc"`
 		TaskUser     string `json:"taskuser"`
 		Status       string `json:"status"`
@@ -79,7 +78,7 @@ type (
 	}
 	// id查询
 	GetTaskIdRequest {
-		Id int64 `path:"id"`
+		Id string `path:"id"`
 	}
 )
 

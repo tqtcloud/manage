@@ -19,8 +19,8 @@ import (
 var (
 	taskFieldNames          = builder.RawFieldNames(&Task{})
 	taskRows                = strings.Join(taskFieldNames, ",")
-	taskRowsExpectAutoSet   = strings.Join(stringx.Remove(taskFieldNames, "`id`", "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`", "`updated_at`"), ",")
-	taskRowsWithPlaceHolder = strings.Join(stringx.Remove(taskFieldNames, "`id`", "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`", "`updated_at`"), "=?,") + "=?"
+	taskRowsExpectAutoSet   = strings.Join(stringx.Remove(taskFieldNames, "`updated_at`", "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`"), ",")
+	taskRowsWithPlaceHolder = strings.Join(stringx.Remove(taskFieldNames, "`id`", "`updated_at`", "`update_time`", "`create_at`", "`created_at`", "`create_time`", "`update_at`"), "=?,") + "=?"
 
 	cacheTaskIdPrefix       = "cache:task:id:"
 	cacheTaskTasknamePrefix = "cache:task:taskname:"
@@ -29,10 +29,10 @@ var (
 type (
 	taskModel interface {
 		Insert(ctx context.Context, data *Task) (sql.Result, error)
-		FindOne(ctx context.Context, id int64) (*Task, error)
+		FindOne(ctx context.Context, id string) (*Task, error)
 		FindOneByTaskname(ctx context.Context, taskname string) (*Task, error)
 		Update(ctx context.Context, data *Task) error
-		Delete(ctx context.Context, id int64) error
+		Delete(ctx context.Context, id string) error
 	}
 
 	defaultTaskModel struct {
@@ -41,11 +41,11 @@ type (
 	}
 
 	Task struct {
-		Id           int64     `db:"id"`
+		Id           string    `db:"id"`            // 任务Id
 		Taskname     string    `db:"taskname"`      // 同步任务名称
 		Vendor       string    `db:"vendor"`        // 云厂商:腾讯/阿里/华为
 		Tasktype     string    `db:"tasktype"`      // 任务同步类型，主机/rds/slb
-		SecretId     int64     `db:"secret_id"`     // 用于操作资源的ak,sk Id
+		SecretId     string    `db:"secret_id"`     // 用于操作资源的ak,sk Id
 		SecretDesc   string    `db:"secret_desc"`   // 凭证描述
 		Region       string    `db:"region"`        // 操作区域Region
 		Taskuser     string    `db:"taskuser"`      // 发起同步的用户
@@ -62,12 +62,12 @@ type (
 
 func newTaskModel(conn sqlx.SqlConn, c cache.CacheConf) *defaultTaskModel {
 	return &defaultTaskModel{
-		CachedConn: sqlc.NewConn(conn, c, cache.WithExpiry(1*time.Minute)),
+		CachedConn: sqlc.NewConn(conn, c),
 		table:      "`task`",
 	}
 }
 
-func (m *defaultTaskModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTaskModel) Delete(ctx context.Context, id string) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -82,7 +82,7 @@ func (m *defaultTaskModel) Delete(ctx context.Context, id int64) error {
 	return err
 }
 
-func (m *defaultTaskModel) FindOne(ctx context.Context, id int64) (*Task, error) {
+func (m *defaultTaskModel) FindOne(ctx context.Context, id string) (*Task, error) {
 	taskIdKey := fmt.Sprintf("%s%v", cacheTaskIdPrefix, id)
 	var resp Task
 	err := m.QueryRowCtx(ctx, &resp, taskIdKey, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
@@ -123,8 +123,8 @@ func (m *defaultTaskModel) Insert(ctx context.Context, data *Task) (sql.Result, 
 	taskIdKey := fmt.Sprintf("%s%v", cacheTaskIdPrefix, data.Id)
 	taskTasknameKey := fmt.Sprintf("%s%v", cacheTaskTasknamePrefix, data.Taskname)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, taskRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Taskname, data.Vendor, data.Tasktype, data.SecretId, data.SecretDesc, data.Region, data.Taskuser, data.Status, data.Message, data.StartAt, data.EndAt, data.TotalSucceed, data.TotalFailed)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, taskRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Id, data.Taskname, data.Vendor, data.Tasktype, data.SecretId, data.SecretDesc, data.Region, data.Taskuser, data.Status, data.Message, data.StartAt, data.EndAt, data.TotalSucceed, data.TotalFailed)
 	}, taskIdKey, taskTasknameKey)
 	return ret, err
 }

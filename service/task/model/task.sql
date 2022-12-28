@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `task` (
     `taskname` varchar(255)  NOT NULL DEFAULT '' COMMENT '同步任务名称',
     `vendor` varchar(255)  NOT NULL DEFAULT '' COMMENT '云厂商:腾讯/阿里/华为',
     `tasktype` varchar(255)  NOT NULL DEFAULT '' COMMENT '任务同步类型，主机/rds/slb',
-    `secret_id` int(64)  NOT NULL COMMENT '用于操作资源的ak,sk Id',
+    `secret_id` varchar(64)  NOT NULL COMMENT '用于操作资源的ak,sk Id',
     `secret_desc` text NOT NULL COMMENT '凭证描述',
     `region` varchar(64) NOT NULL COMMENT '操作区域Region',
     `taskuser` varchar(64) NOT NULL COMMENT '发起同步的用户',

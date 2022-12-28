@@ -34,7 +34,7 @@ type (
     }
         // 删除结构体
     DeleteHostRequest {
-        Id int64 `path:"id"`
+        Id string `path:"id"`
     }
         // 分页查询
     GetHostListRequest {
@@ -44,7 +44,7 @@ type (
 
         // id查询
     GetHostIdRequest {
-        Id int64 `path:"id"`
+        Id string `path:"id"`
     }
         // 更新
     UpdateHostRequest {

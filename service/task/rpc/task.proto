@@ -25,12 +25,12 @@ message CreateRequest {
   string TaskName = 1;
   Vendor Vendor = 2;
   TaskType TaskType = 3;
-  int64 SecretId = 4;
+  string SecretId = 4;
   string Region = 5;
-  int64 UserId = 6;
+  string UserId = 6;
 }
 message CreateResponse {
-  int64 Id = 1;
+  string Id = 1;
   string TaskName = 2;
   string Vendor = 3;
   string TaskType = 4;
@@ -44,10 +44,10 @@ message CreateResponse {
 
 // 删除结构体
 message DeleteRequest {
-  int64 Id = 1;
+  string Id = 1;
 }
 message DeleteResponse {
-  int64 Id = 1;
+  string Id = 1;
   string TaskName = 2;
   string Vendor = 3;
   string TaskType = 4;
@@ -76,12 +76,12 @@ message GetListResponse {
 
 // ID查询
 message GetIdRequest {
-  int64 Id = 1;
+  string Id = 1;
 }
 
 message CallbackRequest {
-  int64 taskId = 1;
-  int64  SecretId =2;
+  string taskId = 1;
+  string  SecretId =2;
   Vendor Vendor = 3;
   string Region = 6;
   TaskType TaskType = 4;

@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/tqtcloud/manage/service/user/rpc/types/user"
 
 	"github.com/tqtcloud/manage/service/front-api/internal/svc"
@@ -26,7 +25,7 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 }
 
 func (l *UserInfoLogic) UserInfo() (resp *types.UserInfoResponse, err error) {
-	uid, _ := l.ctx.Value("uid").(json.Number).Int64()
+	uid, _ := l.ctx.Value("uid").(string)
 	res, err := l.svcCtx.UserRpc.UserInfo(l.ctx, &user.UserInfoRequest{
 		Id: uid,
 	})

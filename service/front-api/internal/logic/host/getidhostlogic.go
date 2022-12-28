@@ -2,11 +2,9 @@ package host
 
 import (
 	"context"
-	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/types/operator"
-	"strconv"
-
 	"github.com/tqtcloud/manage/service/front-api/internal/svc"
 	"github.com/tqtcloud/manage/service/front-api/internal/types"
+	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/types/operator"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +24,7 @@ func NewGetIdHostLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetIdHo
 }
 
 func (l *GetIdHostLogic) GetIdHost(req *types.GetHostIdRequest) (resp *types.HostResponse, err error) {
-	res, err := l.svcCtx.AliOperatorRpc.HostGetId(l.ctx, &operator.GetIdHostRequest{InstanceId: strconv.FormatInt(req.Id, 10)})
+	res, err := l.svcCtx.AliOperatorRpc.HostGetId(l.ctx, &operator.GetIdHostRequest{InstanceId: req.Id})
 	if err != nil {
 		l.Logger.Errorf("AliOperatorRpc HostGetId 查询错误 %s ", err)
 		return nil, err

@@ -34,7 +34,7 @@ func NewHostsModel(conn sqlx.SqlConn, c cache.CacheConf) HostsModel {
 func (m *defaultHostsModel) FindAllPage(ctx context.Context, req *operator.GetListRequest) ([]*Hosts, error) {
 	var resp []*Hosts
 
-	query := fmt.Sprintf("select * from %s ORDER BY `id` ASC  LIMIT ? OFFSET ?", m.table)
+	query := fmt.Sprintf("select * from %s ORDER BY `instance_id` ASC  LIMIT ? OFFSET ?", m.table)
 	fmt.Println("log：", query)
 	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, req.Limit, (req.Page-1)*req.Limit)
 
