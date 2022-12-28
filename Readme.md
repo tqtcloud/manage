@@ -1,7 +1,7 @@
 ##    :fist:后续调整
 - [x] 前端 `API` 统一服务，所有的 `api` 调用写一个里面 (2022-12-26)
 - [x] `error` 错误友好输出返回 (2022-12-27)
-- [ ] 云厂商实现一个 `rpc` 调整
+- [x] 云厂商实现一个 `rpc` 调整(2022-12-28)
 - [ ] 缺少 `http` 中间件拦截器
 - [ ] 整个目录结构调整
 
@@ -46,9 +46,21 @@ export ENDPOINTS=192.168.0.102:2379
 etcdctl --endpoints=$ENDPOINTS member list
 etcdctl --endpoints=$ENDPOINTS get --prefix ""
 ```
+
+### :camera: Git操作
+
 ```shell
+# Git托管删除
 如果你添加.gitignore的时候，git里面已经上传了很多不需要的文件，则使用下面两个命令干掉他们
 如果是文件夹：git rm -r --cached 文件夹名
 如果是文件：git rm --cached 文件名
 方法参考自：https://stackoverflow.com/questions/9550437/how-to-make-git-ignore-idea-files-created-by-rubymine
+
+# Git Tag
+#查看本地的Tag标签
+git tag  
+# 构建Tag 并输入Msg
+git tag -a v0.3 -m "统一api，厂商模块" 
+# 推送指定Tag到仓库
+git push origin v0.3
 ```
