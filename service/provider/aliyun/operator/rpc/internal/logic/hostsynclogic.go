@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	ecs "github.com/alibabacloud-go/ecs-20140526/v3/client"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/pkg/errors"
@@ -9,6 +10,7 @@ import (
 	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/provider/aliyun/client"
 	"github.com/tqtcloud/manage/service/provider/aliyun/operator/model"
+	"strings"
 	"time"
 
 	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/internal/svc"
@@ -64,12 +66,6 @@ func (l *HostSyncLogic) HostSync(in *operator.CreateHostRequest) (*operator.GetL
 			if err == model.ErrNotFound {
 				l.Logger.Infof("InstanceId: %s 主机名：%s 不存在,即将同步该条主机信息", *v.InstanceId, *v.InstanceName)
 
-				// 判断如果实例是经典网络的话，是没有主私网IP的
-				primaryIpAddress := "无"
-				if tea.StringValue(v.InstanceNetworkType) != "classic" {
-					primaryIpAddress = tea.StringValue(v.NetworkInterfaces.NetworkInterface[0].PrimaryIpAddress)
-				}
-
 				newInstanceHost := model.Hosts{
 					InstanceId:              tea.StringValue(v.InstanceId),
 					Regionid:                tea.StringValue(v.RegionId),
@@ -87,10 +83,10 @@ func (l *HostSyncLogic) HostSync(in *operator.CreateHostRequest) (*operator.GetL
 					InstanceChargeType:      tea.StringValue(v.InstanceChargeType),
 					InternetMaxBandwidthOut: int64(tea.Int32Value(v.InternetMaxBandwidthOut)),
 					InternetMaxBandwidthIn:  int64(tea.Int32Value(v.InternetMaxBandwidthIn)),
-					Primaryip:               primaryIpAddress,
-					Publicip:                v.PublicIpAddress.String(),
+					Primaryip:               fmt.Sprintf(strings.Join(l.parsePrivateIp(&v), ",")),
+					Publicip:                fmt.Sprintf(strings.Join(tea.StringSliceValue(v.PublicIpAddress.IpAddress), ",")),
 					EipAddresses:            tea.StringValue(v.EipAddress.IpAddress),
-					SecurityGroupId:         v.SecurityGroupIds.String(),
+					SecurityGroupId:         fmt.Sprintf(strings.Join(tea.StringSliceValue(v.SecurityGroupIds.SecurityGroupId), ",")),
 				}
 				l.Logger.Infof("实例id为：%s 实例名：%s, 地域: %s,", newInstanceHost.InstanceId, newInstanceHost.InstanceName, newInstanceHost.Regionid)
 				_, err := l.svcCtx.HostsModel.Insert(context.Background(), &newInstanceHost)
@@ -127,10 +123,7 @@ func (l *HostSyncLogic) HostSync(in *operator.CreateHostRequest) (*operator.GetL
 				totalSucceed++
 				continue
 			}
-			primaryIpAddress := "无"
-			if tea.StringValue(v.InstanceNetworkType) != "classic" {
-				primaryIpAddress = tea.StringValue(v.NetworkInterfaces.NetworkInterface[0].PrimaryIpAddress)
-			}
+
 			if tea.StringValue(v.InstanceId) == sqData.InstanceId {
 				newInstanceHost := model.Hosts{
 					InstanceId:              tea.StringValue(v.InstanceId),
@@ -149,10 +142,10 @@ func (l *HostSyncLogic) HostSync(in *operator.CreateHostRequest) (*operator.GetL
 					InstanceChargeType:      tea.StringValue(v.InstanceChargeType),
 					InternetMaxBandwidthOut: int64(tea.Int32Value(v.InternetMaxBandwidthOut)),
 					InternetMaxBandwidthIn:  int64(tea.Int32Value(v.InternetMaxBandwidthIn)),
-					Primaryip:               primaryIpAddress,
-					Publicip:                v.PublicIpAddress.String(),
+					Primaryip:               fmt.Sprintf(strings.Join(l.parsePrivateIp(&v), ",")),
+					Publicip:                fmt.Sprintf(strings.Join(tea.StringSliceValue(v.PublicIpAddress.IpAddress), ",")),
 					EipAddresses:            tea.StringValue(v.EipAddress.IpAddress),
-					SecurityGroupId:         v.SecurityGroupIds.String(),
+					SecurityGroupId:         fmt.Sprintf(strings.Join(tea.StringSliceValue(v.SecurityGroupIds.SecurityGroupId), ",")),
 				}
 				l.Logger.Infof("实例存在,执行更新 实例id为：%s 实例名：%s, 地域: %s,", newInstanceHost.InstanceId, newInstanceHost.InstanceName, newInstanceHost.Regionid)
 
@@ -197,4 +190,32 @@ func (l *HostSyncLogic) HostSync(in *operator.CreateHostRequest) (*operator.GetL
 	return &operator.GetListResponse{
 		Data: hosts,
 	}, nil
+}
+
+func (l *HostSyncLogic) parsePrivateIp(ins *ecs.DescribeInstancesResponseBodyInstancesInstance) []string {
+	ips := []string{}
+
+	if ins.NetworkInterfaces == nil {
+		return ips
+	}
+
+	// 优先通过网卡查询主私网IP地址
+	for _, nc := range ins.NetworkInterfaces.NetworkInterface {
+		for _, ip := range nc.PrivateIpSets.PrivateIpSet {
+			if tea.BoolValue(ip.Primary) {
+				ips = append(ips, tea.StringValue(ip.PrivateIpAddress))
+			}
+		}
+	}
+	if len(ips) > 0 {
+		return ips
+	}
+
+	// 查询InnerIpAddress属性
+	if len(ins.InnerIpAddress.IpAddress) > 0 {
+		return tea.StringSliceValue(ins.InnerIpAddress.IpAddress)
+	}
+
+	// 通过专有网络VPC属性查询内网Ip
+	return tea.StringSliceValue(ins.VpcAttributes.PrivateIpAddress.IpAddress)
 }

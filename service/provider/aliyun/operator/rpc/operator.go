@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-
 	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/internal/config"
 	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/internal/server"
 	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/internal/svc"
