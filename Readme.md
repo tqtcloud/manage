@@ -15,7 +15,6 @@
 HSET rpc:auth:user userapi  6jKNZbEpYGeUMAifz10gOnmoty3TV
 HSET rpc:auth:secret secretapi 6jKNZbEpYGeUMAifz10gOnmoty3TV
 HSET rpc:auth:task taskapi 6jKNZbEpYGeUMAifz10gOnmoty3TV
-HSET rpc:auth:host hostapi 6jKNZbEpYGeUMAifz10gOnmoty3TV
 HSET rpc:auth:alioperator alioperatorapi 6jKNZbEpYGeUMAifz10gOnmoty3TV
 
 # 查询
