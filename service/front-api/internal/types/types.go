@@ -178,3 +178,64 @@ type GetTaskListResponse struct {
 type GetTaskIdRequest struct {
 	Id int64 `path:"id"`
 }
+
+type HostResponse struct {
+	InstanceId              string `json:"instance_id"`                //  实例id
+	Regionid                string `json:"regionid"`                   //  实例所属地域id
+	InstanceName            string `json:"instance_name"`              //  实例名称
+	ExpiredTime             string `json:"expired_time"`               //  过期时间
+	CreationTime            string `json:"creation_time"`              //  实例创建时间
+	KeypairName             string `json:"keypair_name"`               //  密钥对名称
+	Description             string `json:"description"`                //  实例描述
+	OsName                  string `json:"os_name"`                    //  操作系统名称
+	ImageId                 string `json:"image_id"`                   //  镜像id
+	GpuAmount               int64  `json:"gpu_amount"`                 //  gpu核数
+	Cpu                     int64  `json:"cpu"`                        //  cpu核数
+	Memory                  int64  `json:"memory"`                     //  内存大小
+	OsType                  string `json:"os_type"`                    //  操作系统类型
+	InstanceType            string `json:"instance_type"`              //  实例规格
+	InstanceChargeType      string `json:"instance_charge_type"`       //  实例的计费方式
+	InternetMaxBandwidthOut int64  `json:"internet_max_bandwidth_out"` //  外网最大出口带宽
+	InternetMaxBandwidthIn  int64  `json:"internet_max_bandwidth_in"`  //  外网最大入口带宽
+	Primaryip               string `json:"primaryip"`                  //  弹性网卡主私有ip地址
+	Publicip                string `json:"publicip"`                   //  实例的公网ip列表
+	EipAddresses            string `json:"eip_addresses"`              //  实例的弹性公网ip列表
+	SecurityGroupId         string `json:"security_group_id"`          //  实例所属安全组id列表
+}
+
+type DeleteHostRequest struct {
+	Id int64 `path:"id"`
+}
+
+type GetHostListRequest struct {
+	Page  int64 `form:"page"`
+	Limit int64 `form:"limit"`
+}
+
+type GetHostIdRequest struct {
+	Id int64 `path:"id"`
+}
+
+type UpdateHostRequest struct {
+	InstanceId              string `json:"instance_id"`                //  实例id
+	Regionid                string `json:"regionid"`                   //  实例所属地域id
+	InstanceName            string `json:"instance_name"`              //  实例名称
+	ExpiredTime             string `json:"expired_time"`               //  过期时间
+	CreationTime            string `json:"creation_time"`              //  实例创建时间
+	KeypairName             string `json:"keypair_name"`               //  密钥对名称
+	Description             string `json:"description"`                //  实例描述
+	OsName                  string `json:"os_name"`                    //  操作系统名称
+	ImageId                 string `json:"image_id"`                   //  镜像id
+	GpuAmount               int64  `json:"gpu_amount"`                 //  gpu核数
+	Cpu                     int64  `json:"cpu"`                        //  cpu核数
+	Memory                  int64  `json:"memory"`                     //  内存大小
+	OsType                  string `json:"os_type"`                    //  操作系统类型
+	InstanceType            string `json:"instance_type"`              //  实例规格
+	InstanceChargeType      string `json:"instance_charge_type"`       //  实例的计费方式
+	InternetMaxBandwidthOut int64  `json:"internet_max_bandwidth_out"` //  外网最大出口带宽
+	InternetMaxBandwidthIn  int64  `json:"internet_max_bandwidth_in"`  //  外网最大入口带宽
+	Primaryip               string `json:"primaryip"`                  //  弹性网卡主私有ip地址
+	Publicip                string `json:"publicip"`                   //  实例的公网ip列表
+	EipAddresses            string `json:"eip_addresses"`              //  实例的弹性公网ip列表
+	SecurityGroupId         string `json:"security_group_id"`          //  实例所属安全组id列表
+}

@@ -1,6 +1,37 @@
-Name: operator.rpc
-ListenOn: 0.0.0.0:8080
+Name: alioperator.rpc
+ListenOn: 0.0.0.0:9004
+Timeout: 100000
 Etcd:
   Hosts:
-  - 127.0.0.1:2379
-  Key: operator.rpc
+    - 192.168.0.102:2379
+  Key: alioperator.rpc
+
+Auth: true               # 是否开启 Auth 验证
+StrictControl: true      # 是否开启严格模式
+Redis:                   # 指定 Redis 服务
+  Host: 192.168.0.102:6379
+  Pass: "123456"
+  Type: node
+  Key: rpc:auth:alioperator     # 指定 Key 应为 hash 类型
+
+Log:
+  ServiceName: AliOperator
+  #  console,file,volume
+  Mode: console
+  #  json,plain
+  Encoding:  plain
+  #  debug,info,error,severe
+  Level: info
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9087
+  Path: /metrics
+
+Mysql:
+  DataSource: root:123456@tcp(192.168.0.102:3306)/manage?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+
+CacheRedis:
+  - Host: 192.168.0.102:6379
+    Pass: "123456"
+    Type: node

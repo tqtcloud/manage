@@ -5,7 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tqtcloud/manage/common/desencryption"
 	"github.com/tqtcloud/manage/common/xerr"
-	"github.com/tqtcloud/manage/service/provider/aliyun/host/rpc/types/host"
+	alioperator "github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/types/operator"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
 	"github.com/tqtcloud/manage/service/task/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/task/rpc/types/task"
@@ -43,7 +43,7 @@ func (l *TaskCallbackLogic) TaskCallback(in *task.CallbackRequest) (*task.Callba
 			//l.Infof("秘钥信息为：%s", sk)
 
 			start := time.Now()
-			_, err = l.svcCtx.HostRpc.HostSync(context.Background(), &host.CreateRequest{
+			_, err = l.svcCtx.AliOperatorRpc.HostSync(context.Background(), &alioperator.CreateHostRequest{
 				AccessKeyId:     secretData.AccessKeyId,
 				AccessKeySecret: sk,
 				Vendor:          in.Vendor.String(),

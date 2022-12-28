@@ -2,6 +2,8 @@ package svc
 
 import (
 	"github.com/tqtcloud/manage/service/front-api/internal/config"
+	alioperatorclient "github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/operatorclient"
+	alioperator "github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/types/operator"
 	"github.com/tqtcloud/manage/service/secret/rpc/secretclient"
 	"github.com/tqtcloud/manage/service/secret/rpc/types/secret"
 	"github.com/tqtcloud/manage/service/task/rpc/taskclient"
@@ -12,17 +14,19 @@ import (
 )
 
 type ServiceContext struct {
-	Config    config.Config
-	UserRpc   user.UserClient
-	TaskRpc   task.TaskClient
-	SecretRpc secret.SecretClient
+	Config         config.Config
+	UserRpc        user.UserClient
+	TaskRpc        task.TaskClient
+	SecretRpc      secret.SecretClient
+	AliOperatorRpc alioperator.OperatorClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config:    c,
-		UserRpc:   userclient.NewUser(zrpc.MustNewClient(c.UserRpc)),
-		TaskRpc:   taskclient.NewTask(zrpc.MustNewClient(c.TaskRpc)),
-		SecretRpc: secretclient.NewSecret(zrpc.MustNewClient(c.SecretRpc)),
+		Config:         c,
+		UserRpc:        userclient.NewUser(zrpc.MustNewClient(c.UserRpc)),
+		TaskRpc:        taskclient.NewTask(zrpc.MustNewClient(c.TaskRpc)),
+		SecretRpc:      secretclient.NewSecret(zrpc.MustNewClient(c.SecretRpc)),
+		AliOperatorRpc: alioperatorclient.NewOperator(zrpc.MustNewClient(c.AliOperatorRpc)),
 	}
 }

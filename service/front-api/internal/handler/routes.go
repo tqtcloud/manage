@@ -4,6 +4,7 @@ package handler
 import (
 	"net/http"
 
+	host "github.com/tqtcloud/manage/service/front-api/internal/handler/host"
 	secret "github.com/tqtcloud/manage/service/front-api/internal/handler/secret"
 	task "github.com/tqtcloud/manage/service/front-api/internal/handler/task"
 	user "github.com/tqtcloud/manage/service/front-api/internal/handler/user"
@@ -103,5 +104,32 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/task-api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/",
+				Handler: host.GetListHostHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/:id",
+				Handler: host.GetIdHostHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/delete/:id",
+				Handler: host.DeleteHostHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/update",
+				Handler: host.UpdateHostHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/provider-api/v1/host"),
 	)
 }

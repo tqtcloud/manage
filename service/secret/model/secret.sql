@@ -1,5 +1,5 @@
 CREATE TABLE `secret` (
-    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `id` varchar(64)  NOT NULL COMMENT '秘钥Id',
     `vendor` varchar(255)  NOT NULL DEFAULT '' COMMENT '云厂商:腾讯/阿里/华为',
     `accessKeyId` varchar(255)  NOT NULL DEFAULT '' COMMENT '云厂商 AK accessKeyId',
     `accessKeySecret` varchar(255)  NOT NULL DEFAULT '' COMMENT '云厂商 SK accessKeySecret',

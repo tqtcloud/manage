@@ -2,7 +2,8 @@ package logic
 
 import (
 	"context"
-
+	"github.com/pkg/errors"
+	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/internal/svc"
 	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/types/operator"
 
@@ -24,7 +25,5 @@ func NewHostUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *HostUp
 }
 
 func (l *HostUpdateLogic) HostUpdate(in *operator.CreateHostRequest) (*operator.CreateHostResponse, error) {
-	// todo: add your logic here and delete this line
-
-	return &operator.CreateHostResponse{}, nil
+	return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "云上资产不允许本地手动更新")
 }

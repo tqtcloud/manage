@@ -10,9 +10,9 @@ type Config struct {
 	Mysql struct {
 		DataSource string
 	}
-	CacheRedis cache.CacheConf
-	Salt       string
-	SecretRpc  zrpc.RpcClientConf
-	UserRpc    zrpc.RpcClientConf
-	HostRpc    zrpc.RpcClientConf
+	CacheRedis     cache.CacheConf
+	Salt           string
+	SecretRpc      zrpc.RpcClientConf
+	UserRpc        zrpc.RpcClientConf
+	AliOperatorRpc zrpc.RpcClientConf
 }

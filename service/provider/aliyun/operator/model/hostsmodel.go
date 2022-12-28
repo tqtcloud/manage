@@ -3,7 +3,7 @@ package model
 import (
 	"context"
 	"fmt"
-	"github.com/tqtcloud/manage/service/task/rpc/types/task"
+	"github.com/tqtcloud/manage/service/provider/aliyun/operator/rpc/types/operator"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -16,7 +16,7 @@ type (
 	// and implement the added methods in customHostsModel.
 	HostsModel interface {
 		hostsModel
-		FindAllPage(ctx context.Context, req *task.GetListRequest) ([]*Hosts, error)
+		FindAllPage(ctx context.Context, req *operator.GetListRequest) ([]*Hosts, error)
 	}
 
 	customHostsModel struct {
@@ -31,7 +31,7 @@ func NewHostsModel(conn sqlx.SqlConn, c cache.CacheConf) HostsModel {
 	}
 }
 
-func (m *defaultHostsModel) FindAllPage(ctx context.Context, req *task.GetListRequest) ([]*Hosts, error) {
+func (m *defaultHostsModel) FindAllPage(ctx context.Context, req *operator.GetListRequest) ([]*Hosts, error) {
 	var resp []*Hosts
 
 	query := fmt.Sprintf("select * from %s ORDER BY `id` ASC  LIMIT ? OFFSET ?", m.table)

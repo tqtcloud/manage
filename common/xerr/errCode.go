@@ -19,6 +19,8 @@ const (
 	DbError uint32 = 100005
 	// 数据库更新影响行数为0错误
 	DbUpdateAffectedZeroError uint32 = 100006
+	// 系统内部分页错误
+	PagerError uint32 = 100007
 )
 
 // 用户模块错误码
@@ -57,6 +59,22 @@ const (
 	TaskIDNoExistError uint32 = 400004
 	// 任务更新失败
 	TaskUpdateError uint32 = 400005
+	// 未定义的云厂商
 	TaskVendorError uint32 = 400006
-	TaskTypeError   uint32 = 400007
+	// 未定义的类型
+	TaskTypeError uint32 = 400007
+)
+
+// 云厂商模块错误
+const (
+	// Provider Client 创建错误
+	ProviderNewClientError uint32 = 500001
+	// 实例创建错误
+	ProviderInstanceError uint32 = 500002
+	// 实例同步更新错误
+	ProviderSyncError uint32 = 500003
+	// 实例已存在,请重新输入
+	InstanceIDExistError uint32 = 500004
+	// 实例不存在,请重新输入
+	InstanceNoExistError uint32 = 500005
 )

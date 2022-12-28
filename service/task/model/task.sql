@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS `task` (
-    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `id` varchar(64)  NOT NULL COMMENT '任务Id',
     `taskname` varchar(255)  NOT NULL DEFAULT '' COMMENT '同步任务名称',
     `vendor` varchar(255)  NOT NULL DEFAULT '' COMMENT '云厂商:腾讯/阿里/华为',
     `tasktype` varchar(255)  NOT NULL DEFAULT '' COMMENT '任务同步类型，主机/rds/slb',

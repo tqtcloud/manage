@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/pkg/errors"
+	"github.com/rs/xid"
 	"github.com/tqtcloud/manage/common/cryptx"
 	"github.com/tqtcloud/manage/common/xerr"
 	"github.com/tqtcloud/manage/service/user/model"
@@ -35,6 +36,7 @@ func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterRespon
 
 	if err == model.ErrNotFound {
 		newUser := model.User{
+			Id:       xid.New().String(),
 			Name:     in.Name,
 			Gender:   in.Gender,
 			Mobile:   in.Mobile,
@@ -47,10 +49,10 @@ func (l *RegisterLogic) Register(in *user.RegisterRequest) (*user.RegisterRespon
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "用户注册错误数据为 err:%v,user:%+v", err, in.Name)
 		}
 
-		newUser.Id, err = resp.LastInsertId()
+		rows, err := resp.RowsAffected()
 		if err != nil {
 			l.Logger.Errorf("数据库递增错误: %s", err)
-			return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserDbInsertError), "数据库递增错误: err:%v,user:%+v", err, in.Name)
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbUpdateAffectedZeroError), "数据库插入影响行错误: err:%v,user:%+v", err, rows)
 		}
 		return &user.RegisterResponse{
 			Id:     newUser.Id,

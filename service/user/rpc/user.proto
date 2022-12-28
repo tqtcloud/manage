@@ -10,7 +10,7 @@ message LoginRequest {
   string Password = 2;
 }
 message LoginResponse {
-  int64 Id = 1;
+  string Id = 1;
   string Name = 2;
   int64 Gender = 3;
   string Mobile = 4;
@@ -28,7 +28,7 @@ message RegisterRequest {
 
 }
 message RegisterResponse {
-  int64 Id = 1;
+  string Id = 1;
   string Name = 2;
   int64 Gender = 3;
   string Mobile = 4;
@@ -39,12 +39,12 @@ message RegisterResponse {
 
 // 用户信息
 message UserInfoRequest {
-  int64 Id = 1;
+  string Id = 1;
 }
 
 
 message UserInfoResponse {
-  int64 Id = 1;
+  string Id = 1;
   string Name = 2;
   int64 Gender = 3;
   string Mobile = 4;

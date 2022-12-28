@@ -15,8 +15,9 @@ type Config struct {
 	Mysql struct {
 		DataSource string
 	}
-	CacheRedis cache.CacheConf
-	UserRpc    zrpc.RpcClientConf
-	SecretRpc  zrpc.RpcClientConf
-	TaskRpc    zrpc.RpcClientConf
+	CacheRedis     cache.CacheConf
+	UserRpc        zrpc.RpcClientConf
+	SecretRpc      zrpc.RpcClientConf
+	TaskRpc        zrpc.RpcClientConf
+	AliOperatorRpc zrpc.RpcClientConf
 }

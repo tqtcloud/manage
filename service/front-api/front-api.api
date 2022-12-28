@@ -2,6 +2,7 @@ syntax = "v1"
 import "doc/user.api"
 import "doc/secret.api"
 import "doc/task.api"
+import "doc/provider/aliyun/host.api"
 
 info(
 	title: "前端统一API"

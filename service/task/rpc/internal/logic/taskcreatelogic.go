@@ -39,6 +39,8 @@ func (l *TaskCreateLogic) TaskCreate(in *task.CreateRequest) (*task.CreateRespon
 	//sk, _ := desencryption.Decrypt(secretData.AccessKeySecret, []byte(l.svcCtx.Config.Salt))
 	//l.Infof("秘钥信息为：%s", sk)
 
+	uid, _ := l.ctx.Value("uid").(int64)
+	l.Logger.Infof("任务创建用户ID为：%d", uid)
 	userinfo, _ := l.svcCtx.UserRpc.UserInfo(l.ctx, &user.UserInfoRequest{Id: in.UserId})
 
 	_, err = l.svcCtx.TaskModel.FindOneByTaskname(l.ctx, in.TaskName)

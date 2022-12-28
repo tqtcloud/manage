@@ -12,6 +12,7 @@ func init() {
 	message[TokenGenerateError] = "生成token失败"
 	message[DbError] = "数据库繁忙,请稍后再试"
 	message[DbUpdateAffectedZeroError] = "更新数据影响行数为0"
+	message[PagerError] = "系统内部分页错误"
 
 	// 用户模块错误
 	message[UsernamePwdError] = "用户或密码错误"
@@ -33,6 +34,13 @@ func init() {
 	message[TaskUpdateError] = "任务更新失败"
 	message[TaskVendorError] = "未定义的云厂商"
 	message[TaskTypeError] = "未定义的类型"
+
+	// 云厂商模块错误
+	message[ProviderNewClientError] = "Provider Client 创建错误"
+	message[ProviderInstanceError] = "实例创建错误"
+	message[ProviderSyncError] = "实例同步更新错误"
+	message[InstanceIDExistError] = "实例已存在,请重新输入"
+	message[InstanceNoExistError] = "实例不存在,请重新输入"
 }
 
 func MapErrMsg(errcode uint32) string {
