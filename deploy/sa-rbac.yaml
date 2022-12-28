@@ -1,0 +1,32 @@
+#创建账号
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: sit-maintenance
+  name: find-endpoints-sa
+
+---
+#创建角色对应操作
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: discov-endpoints-clusterrole
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get","list","watch"]
+
+---
+#给账号绑定角色
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: discov-endpoints-rolebind
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: discov-endpoints-clusterrole
+subjects:
+  - kind: ServiceAccount
+    name: find-endpoints-sa
+    namespace: sit-maintenance

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maintenance-front-api
+  namespace: sit-maintenance
+  labels:
+    app: maintenance-front-api
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: maintenance-front-api
+  template:
+    metadata:
+      labels:
+        app: maintenance-front-api
+    spec:
+      serviceAccountName: find-endpoints-sa
+      containers:
+      - name: maintenance-front-api
+        image: habor.leyaoyao.com/cmdb/front-api:v1
+        ports:
+        - containerPort: 8001
+        readinessProbe:
+          tcpSocket:
+            port: 8001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8001
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 200m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 150Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: maintenance-front-api-svc
+  namespace: sit-maintenance
+spec:
+  ports:
+  - port: 8001
+    targetPort: 8001
+  selector:
+    app: maintenance-front-api

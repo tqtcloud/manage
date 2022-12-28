@@ -27,7 +27,8 @@ HDEL rpc:auth:host hostapi
 goctl model mysql ddl -src ./model/user.sql -dir ./model -c
 goctl  api go -api front-api.api -dir .
 goctl rpc protoc ./rpc/user.proto --go_out=./rpc/types --go-grpc_out=./rpc/types --zrpc_out=./rpc
-
+goctl kube deploy  -replicas 1  -requestCpu 200 -requestMem 50 -limitCpu 300 -limitMem 150 -name maintenance-user -namespace sit-maintenance -image habor.leyaoyao.com/cmdb/user:v1 -o ../../deploy/user.yaml -port 9001 --serviceAccount find-endp
+oints-sa
 cd $ServicePaht
 goctl.exe  docker  --go user.go --port 9001 --version 1.18
 ```

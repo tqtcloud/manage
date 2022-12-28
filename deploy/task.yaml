@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maintenance-task
+  namespace: sit-maintenance
+  labels:
+    app: maintenance-task
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: maintenance-task
+  template:
+    metadata:
+      labels:
+        app: maintenance-task
+    spec:
+      serviceAccountName: find-endpoints-sa
+      containers:
+      - name: maintenance-task
+        image: habor.leyaoyao.com/cmdb/task:v1
+        ports:
+        - containerPort: 9003
+        readinessProbe:
+          tcpSocket:
+            port: 9003
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 9003
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 200m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 150Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: maintenance-task-svc
+  namespace: sit-maintenance
+spec:
+  ports:
+  - port: 9003
+    targetPort: 9003
+  selector:
+    app: maintenance-task

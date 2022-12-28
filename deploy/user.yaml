@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maintenance-user
+  namespace: sit-maintenance
+  labels:
+    app: maintenance-user
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: maintenance-user
+  template:
+    metadata:
+      labels:
+        app: maintenance-user
+    spec:
+      serviceAccountName: find-endpoints-sa
+      containers:
+      - name: maintenance-user
+        image: habor.leyaoyao.com/cmdb/user:v1
+        ports:
+        - containerPort: 9001
+        readinessProbe:
+          tcpSocket:
+            port: 9001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 9001
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 200m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 150Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: maintenance-user-svc
+  namespace: sit-maintenance
+spec:
+  ports:
+  - port: 9001
+    targetPort: 9001
+  selector:
+    app: maintenance-user
