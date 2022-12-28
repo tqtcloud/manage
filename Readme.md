@@ -25,6 +25,9 @@ HGET rpc:auth:user userapi
 goctl model mysql ddl -src ./model/user.sql -dir ./model -c
 goctl  api go -api user.api -dir . 
 goctl rpc protoc ./rpc/user.proto --go_out=./rpc/types --go-grpc_out=./rpc/types --zrpc_out=./rpc
+
+cd $ServicePaht
+goctl.exe  docker  --go user.go --port 9001 --version 1.18
 ```
 
 ## doc 文档生成

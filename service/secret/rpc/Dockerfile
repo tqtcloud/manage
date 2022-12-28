@@ -1,28 +1,33 @@
-FROM golang:alpine AS builder
+FROM golang:1.18-alpine AS builder
 
 LABEL stage=gobuilder
 
 ENV CGO_ENABLED 0
-ENV GOOS linux
 ENV GOPROXY https://goproxy.cn,direct
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-WORKDIR /build/zero
+RUN apk update --no-cache && apk add --no-cache tzdata
+
+WORKDIR /build
+
+ADD go.mod .
+ADD go.sum .
+RUN go mod download
 COPY . .
-RUN sh -c "[ -f go.mod ]" || exit
 COPY service/secret/rpc/etc /app/etc
-RUN go build -ldflags="-s -w" -o /app/secret rpc/secret/secret.go
+RUN go build -ldflags="-s -w" -o /app/secret service/secret/rpc/secret.go
 
-FROM alpine
 
-RUN echo -e http://mirrors.ustc.edu.cn/alpine/v3.13/main/ > /etc/apk/repositories
-RUN cat /etc/apk/repositories
-RUN apk update --no-cache
-RUN apk add --no-cache ca-certificates
-RUN apk add --no-cache tzdata
+FROM scratch
+
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/Shanghai
 ENV TZ Asia/Shanghai
 
 WORKDIR /app
 COPY --from=builder /app/secret /app/secret
 COPY --from=builder /app/etc /app/etc
+
+EXPOSE 9002
 
 CMD ["./secret", "-f", "etc/secret.yaml"]
